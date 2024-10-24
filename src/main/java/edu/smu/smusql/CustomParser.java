@@ -34,7 +34,14 @@ public class CustomParser {
 
             case "SELECT":
                 // table name
-                response.put("tableName", tokens[3]);// The name of the table to be inserted into.
+                int walk = 0;
+                while(walk < tokens.length){
+                    if(tokens[walk].equals("FROM")){
+                        response.put("tableName", tokens[++walk]);// The name of the table to be inserted into.
+                        break;
+                    }
+                    walk++;
+                }
 
                 // command
                 response.put("command", command);
