@@ -35,8 +35,8 @@ public class CustomParser {
             case "SELECT":
                 // table name
                 int walk = 0;
-                while(walk < tokens.length){
-                    if(tokens[walk].equalsIgnoreCase("FROM")){
+                while (walk < tokens.length) {
+                    if (tokens[walk].equalsIgnoreCase("FROM")) {
                         response.put("tableName", tokens[++walk]);// The name of the table to be inserted into.
                         break;
                     }
@@ -83,7 +83,9 @@ public class CustomParser {
                 break;
 
             case "UPDATE":
-
+                if (!tokens[2].equalsIgnoreCase("SET")) {
+                    throw new RuntimeException("ERROR: Invalid UPDATE syntax. Please include 'SET' after table name");
+                }
                 // table name
                 response.put("tableName", tokens[1]);// The name of the table to be inserted into.
                 // command
@@ -130,7 +132,7 @@ public class CustomParser {
             case "DELETE":
 
                 // table name
-                response.put("tableName", tokens[2]);// The name of the table to be deleted from.
+                response.put("tableName", tokens[2]);// The name of the table to be inserted into.
                 // command
                 response.put("command", command);
 
