@@ -168,6 +168,7 @@ public class CustomParser {
 
         String valueList = queryBetweenParentheses(tokens, 3); // Get values list between parentheses
         List<String> values = Arrays.asList(valueList.split(",")); // These are the values in the row to be inserted.
+        values.replaceAll(String::trim); // Trim any spaces
         response.put("columns", values);
 
         return response;
@@ -181,6 +182,7 @@ public class CustomParser {
 
         String valueList = queryBetweenParentheses(tokens, 4); // Get values list between parentheses
         List<String> values = Arrays.asList(valueList.split(",")); // These are the values in the row to be inserted.
+        values.replaceAll(String::trim); // Trim any spaces
         response.put("columns", values);
 
         return response;
