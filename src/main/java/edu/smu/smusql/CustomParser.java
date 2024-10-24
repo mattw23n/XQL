@@ -43,6 +43,7 @@ public class CustomParser {
                 int columnIndex = 1;
                 if (tokens[1].equals("*")) {
                     response.put("target", tokens[1]);
+                    columnIndex = 3; // to skip FROM and TABLE NAME
                 } else {
                     ArrayList<String> columnsList = new ArrayList<>();
 
@@ -56,7 +57,8 @@ public class CustomParser {
                     response.put("target", columnsList);
                 }
 
-                if (tokens[columnIndex++].equalsIgnoreCase("WHERE")) {
+                if (columnIndex < tokens.length - 1 && tokens[++columnIndex].equalsIgnoreCase("WHERE")) {
+                    columnIndex++;
                     response.put("whereConditionColumn", tokens[columnIndex++]);
                     response.put("whereOperator", tokens[columnIndex++]);
                     response.put("whereValue", tokens[columnIndex++]);
@@ -121,7 +123,7 @@ public class CustomParser {
             case "DELETE":
 
                 // table name
-                response.put("tableName", tokens[1]);// The name of the table to be inserted into.
+                response.put("tableName", tokens[2]);// The name of the table to be deleted from.
                 // command
                 response.put("command", command);
 
@@ -155,6 +157,8 @@ public class CustomParser {
     public static HashMap<String, Object> parseCreate(String[] tokens) {
         HashMap<String, Object> response = new HashMap<>();
         response.put("tableName", tokens[2]);// The name of the table to be inserted into.
+        response.put("command", "CREATE");
+
         String valueList = queryBetweenParentheses(tokens, 3); // Get values list between parentheses
         List<String> values = Arrays.asList(valueList.split(",")); // These are the values in the row to be inserted.
         response.put("columns", values);
@@ -166,6 +170,7 @@ public class CustomParser {
     public static HashMap<String, Object> parseInsert(String[] tokens) {
         HashMap<String, Object> response = new HashMap<>();
         response.put("tableName", tokens[2]);// The name of the table to be inserted into.
+        response.put("command", "INSERT");
 
         String valueList = queryBetweenParentheses(tokens, 4); // Get values list between parentheses
         List<String> values = Arrays.asList(valueList.split(",")); // These are the values in the row to be inserted.
