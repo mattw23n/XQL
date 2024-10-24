@@ -36,7 +36,7 @@ public class CustomParser {
                 // table name
                 int walk = 0;
                 while(walk < tokens.length){
-                    if(tokens[walk].equals("FROM")){
+                    if(tokens[walk].equalsIgnoreCase("FROM")){
                         response.put("tableName", tokens[++walk]);// The name of the table to be inserted into.
                         break;
                     }
@@ -133,8 +133,6 @@ public class CustomParser {
                 response.put("tableName", tokens[2]);// The name of the table to be deleted from.
                 // command
                 response.put("command", command);
-
-                // templateParser[2] = tokens[1];
 
                 if (tokens.length > 4) {
                     response.put("whereConditionColumn", tokens[4]);
