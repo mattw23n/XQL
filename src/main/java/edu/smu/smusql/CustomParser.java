@@ -62,6 +62,7 @@ public class CustomParser {
                         columnIndex++;
                     }
                     response.put("target", columnsList);
+                    columnIndex++;
                 }
 
                 if (columnIndex < tokens.length - 1 && tokens[++columnIndex].equalsIgnoreCase("WHERE")) {
