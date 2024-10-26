@@ -1,6 +1,7 @@
 package edu.smu.smusql;
 
-import java.util.*;
+import java.util.Random;
+import java.util.Scanner;
 
 // @author ziyuanliu@smu.edu.sg
 

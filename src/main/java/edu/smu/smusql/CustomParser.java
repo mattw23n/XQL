@@ -2,8 +2,8 @@ package edu.smu.smusql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 //FOR SELECT & UPDATE & DELETE
 /*
@@ -203,7 +203,7 @@ public class CustomParser {
                 "CREATE TABLE student (id, name, age, gpa, deans_list)",
                 "INSERT INTO student VALUES (1, John, 30, 2.4, False)",
                 "SELECT * FROM student",
-                "SELECT name, age FROM student",
+                "SELECT name, age FROM student WHERE gpa > 3.8 AND age < 20",
                 "SELECT * FROM student WHERE gpa > 3.8",
                 "SELECT * FROM student WHERE gpa > 3.8 AND age < 20",
                 "SELECT * FROM student WHERE gpa > 3.8 OR age < 20",
