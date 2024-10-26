@@ -2,6 +2,8 @@ package edu.smu.smusql;
 
 import java.util.*;
 
+import edu.smu.smusql.BTree.BTreeEngine;
+
 // @author ziyuanliu@smu.edu.sg
 
 public class Main {
@@ -9,16 +11,103 @@ public class Main {
      *  Main method for accessing the command line interface of the database engine.
      *  MODIFICATION OF THIS FILE IS NOT RECOMMENDED!
      */
-    static Engine dbEngine = new Engine();
+    static DefaultEngine dbEngine = new DefaultEngine();
+    
+    static HashMap<Integer, String> engines = new HashMap<>();
+    
+
+
+
+    public static void intro(){
+        System.out.println("--------------------------------------");
+        System.out.println("Welcome to XQL!");
+        System.out.println("Before we begin, please select which Engine you would like to use!");
+        System.out.println("Engines available:");
+        System.out.println("ID \tEngine Name");
+        for (Integer key : engines.keySet()) {
+            System.out.println(key + "\t" + engines.get(key));
+        }
+        
+        
+        System.out.println("\nPlease enter the ID of the Engine you would like to use");
+        System.out.println("--------------------------------------"); 
+    }
+
+    public static void engineStats(Engine engine){
+        String name = engine.getName();
+        String[][] stats = engine.getStats();
+
+        System.out.println("--------------------------------------"); 
+        System.out.println("Engine Name: " + name);
+        System.out.println();
+        
+
+        String[] pros = stats[0];
+        System.out.println("Pros:");
+        
+        for(String s : pros){
+            System.out.println(s);
+        }
+
+        System.out.println(); 
+
+        String[] cons = stats[1];
+        System.out.println("Cons:");
+
+        for(String s : cons){
+            System.out.println(s);
+        }
+
+        System.out.println("--------------------------------------"); 
+
+    }
+    
     public static void main(String[] args) {
+        engines.put(1, "BTree");
+        engines.put(2, "Default");
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("smuSQL Starter Code version 0.5");
+        System.out.println("XQL version 1.0");
         System.out.println("Have fun, and good luck!");
 
+        Engine selectedEngine = null;
+
+        //select Engine
+        intro();
+        while(true) {
+            System.out.print("xql>");
+            String query = scanner.nextLine();
+            String selectedEngineName;
+            Integer selectedID;
+
+            if (query.equalsIgnoreCase("exit")) {
+                break;
+            }else{
+                try {
+                    selectedID = Integer.parseInt(query.trim());
+                } catch (Exception e) {
+                    System.out.println("Invalid ID!");
+                    continue;
+                }
+            }
+
+            if(engines.get(selectedID) == null){
+                System.out.println("Invalid ID!");
+                continue;
+            }
+            //get engine
+            
+            selectedEngineName = engines.get(selectedID);
+            System.out.println("Successfully chosen engine" + selectedEngineName);
+            selectedEngine = EngineFactory.getEngine(selectedEngineName);
+
+            engineStats(selectedEngine);
+            break;
+        }
+
         while (true) {
-            System.out.print("smusql> ");
+            System.out.print("xql> ");
             String query = scanner.nextLine();
             if (query.equalsIgnoreCase("exit")) {
                 break;
@@ -32,7 +121,7 @@ public class Main {
                 break;
             }
 
-            System.out.println(dbEngine.executeSQL(query));
+            System.out.println(selectedEngine.executeSQL(query));
         }
         scanner.close();
     }

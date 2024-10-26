@@ -3,10 +3,27 @@ package edu.smu.smusql.BTree;
 import java.util.*;
 
 import edu.smu.smusql.CustomParser;
+import edu.smu.smusql.Engine;
 
-public class BTreeEngine {
+public class BTreeEngine extends Engine {
     private BTree dBTree = new BTree(3);
+    private static String name = "BTree";
+    private static String[][] stats = {{"completed in 47.2 seconds"}, {"traverses columns first, then rows"}};
 
+    public BTreeEngine(){
+        super(name, stats);
+    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public String[][] getStats() {
+        return stats;
+    }
+
+    
     public String create(HashMap<String, Object> map){
         String tableName = (String) map.get("tableName");
         List<String> colArrList = (List<String>) map.get("columns");
@@ -33,6 +50,7 @@ public class BTreeEngine {
         return returnTable;
     }
 
+    
     public String insert(HashMap<String, Object> map){
         String tableName = (String) map.get("tableName");
 
@@ -50,6 +68,7 @@ public class BTreeEngine {
         return Arrays.toString(newValues) +  "inserted into TABLE" + tableName;
     }
 
+    
     public String select(HashMap<String, Object> map){
         String tableName = (String) map.get("tableName");
         Object target = map.get("target");
@@ -135,6 +154,7 @@ public class BTreeEngine {
         return "selected from " + tableName;
     }
 
+    
     public String update(HashMap<String, Object> map){
         // for (String key : map.keySet()) {
         //     System.out.println("Key: " + key + ", Value: " + map.get(key));
@@ -231,7 +251,7 @@ public class BTreeEngine {
         return null;
     }
 
-
+    
     public String delete(HashMap<String, Object> map){
         // for (String key : map.keySet()) {
         //     System.out.println("Key: " + key + ", Value: " + map.get(key));
@@ -297,7 +317,7 @@ public class BTreeEngine {
         return null;
     }
 
-
+    
     public String executeSQL(String query) {
         HashMap<String, Object> map;
         

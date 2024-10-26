@@ -1,47 +1,37 @@
 package edu.smu.smusql;
 
-public class Engine {
+import java.util.HashMap;
 
-    public String executeSQL(String query) {
-        String[] tokens = query.trim().split("\\s+");
-        String command = tokens[0].toUpperCase();
+public abstract class Engine {
 
-        switch (command) {
-            case "CREATE":
-                return create(tokens);
-            case "INSERT":
-                return insert(tokens);
-            case "SELECT":
-                return select(tokens);
-            case "UPDATE":
-                return update(tokens);
-            case "DELETE":
-                return delete(tokens);
-            default:
-                return "ERROR: Unknown command";
-        }
+    protected String name;
+    
+    public String getName() {
+        return name;
     }
 
-    public String insert(String[] tokens) {
-        //TODO
-        return "not implemented";
-    }
-    public String delete(String[] tokens) {
-        //TODO
-        return "not implemented";
+    public String[][] getStats() {
+        return stats;
     }
 
-    public String select(String[] tokens) {
-        //TODO
-        return "not implemented";
+    protected String[][] stats;
+
+    // Constructor for initializing common attributes
+    public Engine(String name, String[][] stats2) {
+        this.name = name;
+        this.stats = stats2;
     }
-    public String update(String[] tokens) {
-        //TODO
-        return "not implemented";
-    }
-    public String create(String[] tokens) {
-        //TODO
-        return "not implemented";
-    }
+
+    public abstract String executeSQL(String query);
+
+    public abstract String insert(HashMap<String, Object> map);
+
+    public abstract String delete(HashMap<String, Object> map);
+
+    public abstract String select(HashMap<String, Object> map);
+
+    public abstract String update(HashMap<String, Object> map);
+
+    public abstract String create(HashMap<String, Object> map);
 
 }
