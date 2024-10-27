@@ -32,7 +32,7 @@ class ReversedBTreeNode {
             }
 
             // If the key (original value) already exists, append the original key to the list
-            if (i >= 0 && keys[i] != null && keys[i].getKey() == KV.getKey()) {
+            if (i >= 0 && keys[i] != null && keys[i].getKey().equals(KV.getKey()) ) {
                 keys[i].getValue().add(KV.getValue()); // Add original key to the list
             } else {
                 // If the key doesn't exist, create a new list and insert the key-value pair
