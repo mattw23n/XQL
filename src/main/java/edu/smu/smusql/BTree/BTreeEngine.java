@@ -26,7 +26,7 @@ public class BTreeEngine {
     public Table selectTable(String tableName){
         Table returnTable = (Table) dBTree.search(tableName);
         if(returnTable == null){
-            System.out.println("Table does not exist!");
+            // System.out.println("Table does not exist!");
             return null;
         }
         
@@ -47,7 +47,7 @@ public class BTreeEngine {
         }
 
         table.insert(newValues);
-        return Arrays.toString(newValues) +  "inserted into TABLE" + tableName;
+        return Arrays.toString(newValues) +  " inserted into TABLE " + tableName;
     }
 
     public String select(HashMap<String, Object> map){
@@ -83,11 +83,15 @@ public class BTreeEngine {
         boolean isSecondCondition = (map.get("secondOperator") == null) ? false : true;
 
         ArrayList<String> cols = table.getColumnHeaders();
-        String[] condition = new String[cols.size()];
+        List<String[]> conditionsList = new ArrayList<>();
+
+        String[] firstCondition = new String[cols.size()];
+        String[] secondCondition = new String[cols.size()];
         String type = "";
 
-        for(int i = 0; i < condition.length; i++){
-            condition[i] = "";
+        for(int i = 0; i < firstCondition.length; i++){
+            firstCondition[i] = "";
+            secondCondition[i] = "";
         }
 
         if(isWhereExists){
@@ -101,9 +105,11 @@ public class BTreeEngine {
                 if(cols.get(i).trim().equals(whereColumn)){
                     String prefix = (whereOperator.equals("=")) ? "" : whereOperator;
 
-                    condition[i] = prefix + whereValue;
+                    firstCondition[i] = prefix + whereValue;
                 }
             }
+
+            conditionsList.add(firstCondition);
 
         }
 
@@ -117,22 +123,31 @@ public class BTreeEngine {
                 if(cols.get(i).trim().equals(whereColumn)){
                     String prefix = (whereOperator.equals("=")) ? "" : whereOperator;
 
-                    condition[i] = prefix + whereValue;
+                    secondCondition[i] = prefix + whereValue;
                 }
             }
+
+            conditionsList.add(secondCondition);
         }
+
+        String[][] conditions = conditionsList.toArray(new String[0][0]);
 
         // System.out.println(Arrays.toString(targetArr));
-        // System.out.println(Arrays.toString(condition));
+
+        // for(String[] s : conditions){
+        //     System.out.println(Arrays.toString(s));
+        // }
+        
         // System.out.println(targetStr);
+        String returnStr = "";
         
         if(!targetStr.equals("*") || isWhereExists){
-            table.selectConditionPrint(condition, type, (targetArr == null ? selectAll : targetArr));
+            returnStr = table.selectConditionPrint(conditions, type, (targetArr == null ? selectAll : targetArr));
         }else{
-            table.selectAll();
+            returnStr = table.selectAll();
         }
 
-        return "selected from " + tableName;
+        return returnStr;
     }
 
     public String update(HashMap<String, Object> map){
@@ -161,16 +176,19 @@ public class BTreeEngine {
         ArrayList<String> cols = table.getColumnHeaders();
 
         String[] newValues = new String[cols.size()];
-        String[] condition = new String[cols.size()];
+
+        List<String[]> conditionsList = new ArrayList<>();
+        String[] firstCondition = new String[cols.size()];
+        String[] secondCondition = new String[cols.size()];
 
         String type = "";
 
-        for(int i = 0; i < condition.length; i++){
-            condition[i] = "";
+        for(int i = 0; i < firstCondition.length; i++){
+            firstCondition[i] = "";
+            secondCondition[i] = "";
             newValues[i] = "";
         }
 
-        //create condition array
         if(isWhereExists){
             String whereColumn = (String) map.get("whereConditionColumn");
             String whereValue = (String) map.get("whereValue");
@@ -182,9 +200,11 @@ public class BTreeEngine {
                 if(cols.get(i).trim().equals(whereColumn)){
                     String prefix = (whereOperator.equals("=")) ? "" : whereOperator;
 
-                    condition[i] = prefix + whereValue;
+                    firstCondition[i] = prefix + whereValue;
                 }
             }
+
+            conditionsList.add(firstCondition);
 
         }
 
@@ -198,10 +218,16 @@ public class BTreeEngine {
                 if(cols.get(i).trim().equals(whereColumn)){
                     String prefix = (whereOperator.equals("=")) ? "" : whereOperator;
 
-                    condition[i] = prefix + whereValue;
+                    secondCondition[i] = prefix + whereValue;
                 }
             }
+
+            conditionsList.add(secondCondition);
         }
+
+        String[][] conditions = conditionsList.toArray(new String[0][0]);
+
+        
 
 
         
@@ -223,12 +249,14 @@ public class BTreeEngine {
         }
 
         // System.out.println(Arrays.toString(newValues));
-        // System.out.println(Arrays.toString(condition));
-        // System.out.println(type);
 
-        table.update(newValues, condition, type);
+        // for(String[] s : conditions){
+        //     System.out.println(Arrays.toString(s));
+        // }
 
-        return null;
+        String returnStr = table.update(newValues, conditions, type);
+
+        return returnStr;
     }
 
 
@@ -250,11 +278,15 @@ public class BTreeEngine {
         boolean isSecondCondition = (map.get("secondOperator") == null) ? false : true;
 
         ArrayList<String> cols = table.getColumnHeaders();
-        String[] condition = new String[cols.size()];
+        List<String[]> conditionsList = new ArrayList<>();
+
+        String[] firstCondition = new String[cols.size()];
+        String[] secondCondition = new String[cols.size()];
         String type = "";
 
-        for(int i = 0; i < condition.length; i++){
-            condition[i] = "";
+        for(int i = 0; i < firstCondition.length; i++){
+            firstCondition[i] = "";
+            secondCondition[i] = "";
         }
 
         if(isWhereExists){
@@ -268,9 +300,11 @@ public class BTreeEngine {
                 if(cols.get(i).trim().equals(whereColumn)){
                     String prefix = (whereOperator.equals("=")) ? "" : whereOperator;
 
-                    condition[i] = prefix + whereValue;
+                    firstCondition[i] = prefix + whereValue;
                 }
             }
+
+            conditionsList.add(firstCondition);
 
         }
 
@@ -284,17 +318,23 @@ public class BTreeEngine {
                 if(cols.get(i).trim().equals(whereColumn)){
                     String prefix = (whereOperator.equals("=")) ? "" : whereOperator;
 
-                    condition[i] = prefix + whereValue;
+                    secondCondition[i] = prefix + whereValue;
                 }
             }
+
+            conditionsList.add(secondCondition);
         }
 
-        // System.out.println(Arrays.toString(condition));
+        String[][] conditions = conditionsList.toArray(new String[0][0]);
+
+        // for(String[] s : conditions){
+        //     System.out.println(Arrays.toString(s));
+        // }
         // System.out.println(type);
 
-        table.delete(condition, type);
+        String returnStr = table.delete(conditions, type);
 
-        return null;
+        return returnStr;
     }
 
 
