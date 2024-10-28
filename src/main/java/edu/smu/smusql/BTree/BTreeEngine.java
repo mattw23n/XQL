@@ -349,43 +349,5 @@ public class BTreeEngine extends Engine {
         }
     }
     
-
-    public static void main(String[] args) {
-                
-
-        BTreeEngine engine = new BTreeEngine();
-
-        String[] customCommands = {
-                "CREATE TABLE student (id, name, age, gpa, deans_list)",
-                "INSERT INTO student VALUES (1, John, 30, 2.4, False)",
-                "INSERT INTO student VALUES (2, Job, 20, 3.9, False)",
-                "SELECT * FROM student",
-                "SELECT name, age FROM student",
-                "SELECT age, gpa FROM student WHERE gpa < 3.8",
-                "SELECT * FROM student WHERE gpa > 3.8 AND age < 20",
-                "SELECT * FROM student WHERE gpa > 3.8 OR age < 20",
-                "UPDATE student SET age = 25 WHERE id = 1",
-                "UPDATE student SET deans_list = True WHERE gpa > 3.8 OR age = 20",
-                "UPDATE student SET deans_list = True, age = 25 WHERE gpa > 3.8 OR age = 20",
-                "DELETE FROM student WHERE id = 4",
-                "SELECT * FROM student",
-                "INSERT INTO student VALUES (3, Joao, 20, 3.7, True)",
-                "SELECT * FROM student",
-                "DELETE FROM student WHERE gpa < 2.0 OR name = Joao",
-                "SELECT * FROM student",
-        };
-
-        for(String s : customCommands){
-            engine.executeSQL(s);
-        }
-    
-
-        
-
-        
-
-
-    }
-    
 }
 

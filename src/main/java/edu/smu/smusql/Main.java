@@ -65,6 +65,7 @@ public class Main {
     public static void main(String[] args) {
         engines.put(1, "BTree");
         engines.put(2, "Default");
+        engines.put(3, "Treemap");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -206,7 +207,6 @@ public class Main {
             int user_id = random.nextInt(9999);
             int product_id = random.nextInt(9999);
             int quantity = random.nextInt(1, 100);
-            String category = getRandomCategory(random);
             String insertCommand = String.format("INSERT INTO orders VALUES (%d, %d, %d, %d)", i, user_id, product_id, quantity);
             dbEngine.executeSQL(insertCommand);
         }
