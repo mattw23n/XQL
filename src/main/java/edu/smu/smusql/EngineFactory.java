@@ -1,5 +1,6 @@
 package edu.smu.smusql;
 
+import edu.smu.smusql.ArrayList.ALEngine;
 import edu.smu.smusql.BTree.BTreeEngine;
 import edu.smu.smusql.Treemap.TMEngine;
 
@@ -12,6 +13,9 @@ public class EngineFactory {
 
             case "TREEMAP":
                 return new TMEngine();
+
+            case "ARRAYLIST":
+                return new ALEngine();
 
             case "DEFAULT":
                 return new DefaultEngine();
