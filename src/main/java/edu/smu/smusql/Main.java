@@ -67,6 +67,8 @@ public class Main {
         engines.put(2, "BTree");
         engines.put(3, "Treemap");
         engines.put(4, "ArrayList");
+        engines.put(5, "HashMap");  
+        engines.put(6, "MapHeapMap");
 
         Scanner scanner = new Scanner(System.in);
 

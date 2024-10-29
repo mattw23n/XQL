@@ -19,6 +19,12 @@ public class EngineFactory {
             case "ARRAYLIST":
                 return new ALEngine();
 
+            case "HASHMAP":
+                return new HashMapEngine();
+
+            case "MAPHEAPMAP":
+                return new MapHeapMapEngine();
+
             case "DEFAULT":
                 return new DefaultEngine();
 
