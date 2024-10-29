@@ -1,23 +1,21 @@
 package edu.smu.smusql.CircularLinkedList;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import edu.smu.smusql.CustomParser;
 
+import edu.smu.smusql.CustomParser;
 import edu.smu.smusql.Engine;
 
 public class CLLEngine extends Engine {
 
     private static String name = "Circular Linked List";
-    private static String[][] stats = {{""}, {""}};
+    private static String[][] stats = { { "" }, { "" } };
 
-    public CLLEngine(){
+    public CLLEngine() {
         super(name, stats);
     }
-
 
     public String executeSQL(String query) {
         HashMap<String, Object> parsedQuery = CustomParser.parseSQL(query);
@@ -98,12 +96,12 @@ public class CLLEngine extends Engine {
         Table table = db.findTableByName(tableName);
         if (table == null)
             return "Table not found";
-    
+
         // Determine target columns
         Object targetObj = parsedQuery.get("target");
         List<String> targetColumns = new ArrayList<>();
         boolean selectAllColumns = false;
-    
+
         if (targetObj instanceof String && targetObj.equals("*")) {
             selectAllColumns = true;
         } else if (targetObj instanceof List) {
@@ -111,29 +109,29 @@ public class CLLEngine extends Engine {
         } else {
             return "ERROR: Invalid target columns format";
         }
-    
+
         // Condition parsing
         String conditionColumn = (String) parsedQuery.get("whereConditionColumn");
         String whereOperator = (String) parsedQuery.get("whereOperator");
         String conditionValue = (String) parsedQuery.get("whereValue");
-    
+
         String secondCondition = (String) parsedQuery.get("secondCondition");
         String secondConditionColumn = (String) parsedQuery.get("secondConditionColumn");
         String secondOperator = (String) parsedQuery.get("secondOperator");
         String secondValue = (String) parsedQuery.get("secondValue");
-    
+
         int conditionColumnIndex = -1;
         int secondConditionColumnIndex = -1;
-    
+
         // Prepare results output
         StringBuilder result = new StringBuilder();
         result.append("Results from ").append(tableName).append(":\n");
-    
+
         CircularlyLinkedList<String[]> rows = table.getRows();
         int initialSize = rows.size();
         for (int i = 0; i < initialSize; i++) {
             String[] row = rows.removeFirst();
-    
+
             // Find column indices if conditions are specified
             if (conditionColumn != null && conditionColumnIndex == -1) {
                 conditionColumnIndex = table.getColumnIndex(conditionColumn);
@@ -141,19 +139,21 @@ public class CLLEngine extends Engine {
             if (secondConditionColumn != null && secondConditionColumnIndex == -1) {
                 secondConditionColumnIndex = table.getColumnIndex(secondConditionColumn);
             }
-    
+
             // Evaluate conditions if specified
-            boolean conditionMet = conditionColumn == null || 
-                    evaluateCondition(row[conditionColumnIndex], whereOperator, conditionValue);
-            boolean secondConditionMet = secondConditionColumn == null || 
-                    evaluateCondition(row[secondConditionColumnIndex], secondOperator, secondValue);
-    
+            boolean conditionMet = conditionColumn == null ||
+                    (conditionColumnIndex != -1 && conditionColumnIndex < row.length &&
+                            evaluateCondition(row[conditionColumnIndex], whereOperator, conditionValue));
+            boolean secondConditionMet = secondConditionColumn == null ||
+                    (secondConditionColumnIndex != -1 && secondConditionColumnIndex < row.length &&
+                            evaluateCondition(row[secondConditionColumnIndex], secondOperator, secondValue));
+
             // Determine if the row should be selected
             boolean selectRow = (conditionColumn == null && secondConditionColumn == null) // No conditions specified
-                    || (secondCondition == null ? conditionMet 
-                    : secondCondition.equalsIgnoreCase("AND") ? conditionMet && secondConditionMet 
-                    : conditionMet || secondConditionMet);
-    
+                    || (secondCondition == null ? conditionMet
+                            : secondCondition.equalsIgnoreCase("AND") ? conditionMet && secondConditionMet
+                                    : conditionMet || secondConditionMet);
+
             // Collect selected columns or all columns if conditions are met
             if (selectRow) {
                 if (selectAllColumns) {
@@ -170,10 +170,10 @@ public class CLLEngine extends Engine {
                     result.append(rowResult.toString()).append("\n");
                 }
             }
-    
+
             rows.addLast(row);
         }
-    
+
         return result.toString();
     }
 
