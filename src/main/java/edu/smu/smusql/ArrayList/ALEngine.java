@@ -142,6 +142,8 @@ public class ALEngine extends Engine {
                     Condition condition1 = ConditionBuilder.buildCondition(whereConditionColumn, whereOperator, whereValue, table);
                     Condition condition2 = ConditionBuilder.buildCondition(secondConditionColumn, secondOperator, secondValue, table);
 
+                    secondCondition = secondCondition.toUpperCase();
+
                     Condition combinedCondition;
                     if (secondCondition.equals("AND")) {
                         combinedCondition = condition1.and(condition2);
@@ -193,6 +195,8 @@ public class ALEngine extends Engine {
 
                     Condition condition1 = ConditionBuilder.buildCondition(whereConditionColumn, whereOperator, whereValue, table);
                     Condition condition2 = ConditionBuilder.buildCondition(secondConditionColumn, secondOperator, secondValue, table);
+
+                    secondCondition = secondCondition.toUpperCase();
 
                     Condition combinedCondition;
                     if (secondCondition.equals("AND")) {
@@ -255,6 +259,8 @@ public class ALEngine extends Engine {
             Condition condition1 = ConditionBuilder.buildCondition(whereConditionColumn, whereOperator, whereValue, table);
             Condition condition2 = ConditionBuilder.buildCondition(secondConditionColumn, secondOperator, secondValue, table);
 
+            secondCondition = secondCondition.toUpperCase();
+
             Condition combinedCondition;
             if (secondCondition.equals("AND")) {
                 combinedCondition = condition1.and(condition2);
@@ -309,6 +315,8 @@ public class ALEngine extends Engine {
                 Condition condition1 = ConditionBuilder.buildCondition(whereConditionColumn, whereOperator, whereValue, table);
                 Condition condition2 = ConditionBuilder.buildCondition(secondConditionColumn, secondOperator, secondValue, table);
     
+                secondCondition = secondCondition.toUpperCase();
+
                 Condition combinedCondition;
                 if (secondCondition.equals("AND")) {
                     combinedCondition = condition1.and(condition2);
