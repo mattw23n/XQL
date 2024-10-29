@@ -2,6 +2,7 @@ package edu.smu.smusql;
 
 import edu.smu.smusql.ArrayList.ALEngine;
 import edu.smu.smusql.BTree.BTreeEngine;
+import edu.smu.smusql.HashMap.HashMapEngine;
 import edu.smu.smusql.Treemap.TMEngine;
 
 public class EngineFactory {
@@ -16,6 +17,9 @@ public class EngineFactory {
 
             case "ARRAYLIST":
                 return new ALEngine();
+
+            case "HASHMAP":
+                return new HashMapEngine();
 
             case "DEFAULT":
                 return new DefaultEngine();

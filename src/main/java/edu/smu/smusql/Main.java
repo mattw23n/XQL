@@ -1,8 +1,8 @@
 package edu.smu.smusql;
 
-import java.util.*;
-
-import edu.smu.smusql.BTree.BTreeEngine;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Scanner;
 
 // @author ziyuanliu@smu.edu.sg
 
@@ -67,6 +67,7 @@ public class Main {
         engines.put(2, "BTree");
         engines.put(3, "Treemap");
         engines.put(4, "ArrayList");
+        engines.put(5, "HashMap");
 
         Scanner scanner = new Scanner(System.in);
 
@@ -134,7 +135,7 @@ public class Main {
     public static void autoEvaluate() {
 
         // Set the number of queries to execute
-        int numberOfQueries = 100000;
+        int numberOfQueries = 1000000;
 
         // Create tables
         selectedEngine.executeSQL("CREATE TABLE users (id, name, age, city)");
