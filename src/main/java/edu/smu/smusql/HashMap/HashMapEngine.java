@@ -11,7 +11,7 @@ public class HashMapEngine extends Engine {
 
     private final Map<String,Table> database = new HashMap<>();
     
-    private static String name = "HashMap Engine";
+    private static String name = "HashMap";
     private static String[][] stats2 = {{"Time"}, {"Test"}};
     
     public HashMapEngine() {

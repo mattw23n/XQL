@@ -69,6 +69,7 @@ public class Main {
         engines.put(4, "ArrayList");
         engines.put(5, "HashMap");  
         engines.put(6, "MapHeapMap");
+        engines.put(7, "GPT");
 
         Scanner scanner = new Scanner(System.in);
 

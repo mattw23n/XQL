@@ -2,6 +2,7 @@ package edu.smu.smusql;
 
 import edu.smu.smusql.ArrayList.ALEngine;
 import edu.smu.smusql.BTree.BTreeEngine;
+import edu.smu.smusql.GPT.GPTEngine;
 import edu.smu.smusql.HashMap.HashMapEngine;
 import edu.smu.smusql.MapHeapMap.MapHeapMapEngine;
 import edu.smu.smusql.Treemap.TMEngine;
@@ -24,6 +25,9 @@ public class EngineFactory {
 
             case "MAPHEAPMAP":
                 return new MapHeapMapEngine();
+            
+            case "GPT":
+                return new GPTEngine();
 
             case "DEFAULT":
                 return new DefaultEngine();
