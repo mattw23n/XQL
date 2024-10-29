@@ -2,8 +2,6 @@ package edu.smu.smusql;
 
 import java.util.*;
 
-import edu.smu.smusql.BTree.BTreeEngine;
-
 // @author ziyuanliu@smu.edu.sg
 
 public class Main {
@@ -67,6 +65,7 @@ public class Main {
         engines.put(2, "BTree");
         engines.put(3, "Treemap");
         engines.put(4, "ArrayList");
+        engines.put(5, "MapHeapMap");
 
         Scanner scanner = new Scanner(System.in);
 
