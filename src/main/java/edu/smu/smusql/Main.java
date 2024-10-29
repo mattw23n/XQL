@@ -1,6 +1,9 @@
 package edu.smu.smusql;
 
-import java.util.*;
+import java.util.Random;
+import java.util.Scanner;
+
+import edu.smu.smusql.HashMap.HashMapEngine;
 
 // @author ziyuanliu@smu.edu.sg
 
@@ -9,7 +12,8 @@ public class Main {
      *  Main method for accessing the command line interface of the database engine.
      *  MODIFICATION OF THIS FILE IS NOT RECOMMENDED!
      */
-    static Engine dbEngine = new Engine();
+    static HashMapEngine dbEngine = new HashMapEngine();
+
     public static void main(String[] args) {
 
         Scanner scanner = new Scanner(System.in);

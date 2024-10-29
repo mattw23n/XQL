@@ -2,8 +2,8 @@ package edu.smu.smusql;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.HashMap;
+import java.util.List;
 
 //FOR SELECT & UPDATE & DELETE
 /*
@@ -26,13 +26,15 @@ public class CustomParser {
 
         switch (command) {
 
-            case "CREATE":
+            case "CREATE" -> {
                 return parseCreate(tokens);
+            }
 
-            case "INSERT":
+            case "INSERT" -> {
                 return parseInsert(tokens);
+            }
 
-            case "SELECT":
+            case "SELECT" -> {
                 // table name
                 int walk = 0;
                 while (walk < tokens.length) {
@@ -74,16 +76,15 @@ public class CustomParser {
 
                 if (columnIndex < tokens.length
                         && (tokens[columnIndex].equalsIgnoreCase("AND")
-                                || tokens[columnIndex].equalsIgnoreCase("OR"))) {
+                        || tokens[columnIndex].equalsIgnoreCase("OR"))) {
                     response.put("secondCondition", tokens[columnIndex++]);
                     response.put("secondConditionColumn", tokens[columnIndex++]);
                     response.put("secondOperator", tokens[columnIndex++]);
                     response.put("secondValue", tokens[columnIndex++]);
                 }
+            }
 
-                break;
-
-            case "UPDATE":
+            case "UPDATE" -> {
                 if (!tokens[2].equalsIgnoreCase("SET")) {
                     throw new RuntimeException("ERROR: Invalid UPDATE syntax. Please include 'SET' after table name");
                 }
@@ -128,10 +129,9 @@ public class CustomParser {
                     response.put("secondOperator", tokens[setIndex++]);
                     response.put("secondValue", tokens[setIndex++]);
                 }
-                break;
+            }
 
-            case "DELETE":
-
+            case "DELETE" -> {
                 // table name
                 response.put("tableName", tokens[2]);// The name of the table to be inserted into.
                 // command
@@ -150,11 +150,11 @@ public class CustomParser {
                     response.put("secondOperator", tokens[9]);
                     response.put("secondValue", tokens[10]);
                 }
+            }
 
-                break;
-
-            default:
+            default -> {
                 return null;
+            }
         }
 
         // Trim the query and split by spaces
