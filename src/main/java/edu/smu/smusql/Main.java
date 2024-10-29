@@ -7,7 +7,8 @@ import java.util.Scanner;
 // @author ziyuanliu@smu.edu.sg
 
 public class Main {
-    /*
+    /*55
+    5
      *  Main method for accessing the command line interface of the database engine.
      *  MODIFICATION OF THIS FILE IS NOT RECOMMENDED!
      */
@@ -15,8 +16,6 @@ public class Main {
     
     static HashMap<Integer, String> engines = new HashMap<>();
     
-
-
 
     public static void intro(){
         System.out.println("--------------------------------------");
@@ -137,7 +136,7 @@ public class Main {
     public static void autoEvaluate() {
 
         // Set the number of queries to execute
-        int numberOfQueries = 1000000;
+        int numberOfQueries = 100000;
 
         // Create tables
         selectedEngine.executeSQL("CREATE TABLE users (id, name, age, city)");

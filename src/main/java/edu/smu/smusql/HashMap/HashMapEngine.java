@@ -11,18 +11,24 @@ public class HashMapEngine extends Engine {
 
     private final Map<String,Table> database = new HashMap<>();
     
+    HashMap<String, Object> tokens;
+    String tableName;
+    Table table;
+
     private static String name = "HashMap";
-    private static String[][] stats2 = {{"Time"}, {"Test"}};
+    private static String[][] stats = {{"Time"}, {"Test"}};
     
     public HashMapEngine() {
-        super(name, stats2);
+        super(name, stats);
     }
 
-    @Override
     public String executeSQL(String query) {
         try {
-            HashMap<String, Object> tokens = CustomParser.parseSQL(query);
-            
+            tokens = CustomParser.parseSQL(query);
+//System.out.println("Parsed Tokens: " + tokens); 
+
+            tableName = (String) tokens.get("tableName");
+
             // Error handling for parsing
             if (tokens == null || !tokens.containsKey("command")) {
                 return "ERROR: Unable to read command";
@@ -46,52 +52,50 @@ public class HashMapEngine extends Engine {
 
     public String insert(HashMap<String, Object> tokens) {
 
-        String tableName = (String) tokens.get("tableName");
-
         //error
         if (!database.containsKey(tableName)) {
             return "ERROR: Table does not exist";
         }
 
+        Table table = database.get(tableName);
+
         List<String> columns = (List<String>) tokens.get("columns");
 
         List<Object> values = (List<Object>) tokens.get("values");
 
-        // Check column count against values count
-        if (columns.size() != values.size()) {
-            return "ERROR: Column count doesn't match value count";
+            // If values are null, use columns for both names and values
+    if (values == null) {
+        values = (List<Object>) tokens.get("columns");
+        columns = table.getColumnOrder();  // Get column order from table definition
+    }
+
+        // Create a row with specified columns and values
+        HashMap<String, Object> newRow = new HashMap<>();
+        for (int i = 0; i < columns.size(); i++) {
+            newRow.put(columns.get(i), values.get(i));
         }
 
-        //get table & insert row
-        Table table = database.get(tableName);
-        String primaryKey = columns.get(0).trim();
-        Object[] rowValues = values.toArray();
+        // Add the new row to the table
+        table.addRow(newRow);
 
-        // Insert the new row into the table
-        table.addRow(tableName, primaryKey, rowValues);
-
-        return "Row inserted into " + tableName + " with primary key " + primaryKey;
+        return "Row inserted into " + tableName;
     }
 
     public String delete(HashMap<String, Object> tokens) {
-
-        String tableName = (String) tokens.get("tableName");
-        
+        // Error if table does not exist
         if (!database.containsKey(tableName)) {
             return "ERROR: Table does not exist";
         }
 
-        // Retrieve the table and delete the row
-        Table table = database.get(tableName);
+        //Table table = database.get(tableName);
+
+        // Retrieve the primary key for row deletion
         String primaryKey = (String) tokens.get("whereValue");
 
-        table.deleteRow(tableName, primaryKey);
-
-        return "Row with primary key " + primaryKey + " deleted from " + tableName;
+        return "ERROR: Row with primary key " + primaryKey + " not found in " + tableName;   
     }
 
     public String select(HashMap<String, Object> tokens) {
-        String tableName = (String) tokens.get("tableName");
 
         // Error if table does not exist
         if (!database.containsKey(tableName)) {
@@ -100,11 +104,28 @@ public class HashMapEngine extends Engine {
 
         // Retrieve the table and select all rows
         Table table = database.get(tableName);
-        return table.selectAllRows(tableName);
+        if (table == null) {
+            return "ERROR: Table is not initialized correctly.";
+        }
+        // Assuming we're selecting all rows and columns
+        StringBuilder result = new StringBuilder();
+        result.append("Table ").append(tableName).append(":\n");
+
+        // Add column headers
+        result.append(String.join(", ", table.getColumnOrder())).append("\n");
+
+        // Add row data
+        for (Map.Entry<Integer, HashMap<String, Object>> row : table.getTable().entrySet()) {
+            for (String column : table.getColumnOrder()) {
+                result.append(row.getValue().getOrDefault(column, "NULL")).append("\t");
+            }
+            result.append("\n");
+        }
+
+        return result.toString();
     }
 
     public String update(HashMap<String, Object> tokens) {
-        String tableName = (String) tokens.get("tableName");
 
         // Check if the table exists
         if (!database.containsKey(tableName)) {
@@ -112,25 +133,24 @@ public class HashMapEngine extends Engine {
         }
 
         Table table = database.get(tableName);
-        String primaryKey = (String) tokens.get("whereValue");
-        Map<String, Object> updatedData = new HashMap<>();
 
+        String primaryKey = (String) tokens.get("whereValue");
+
+        // Parse columns and values to update
         List<String> columnsToUpdate = (List<String>) tokens.get("target");
+        
+        HashMap<String, Object> updatedData = new HashMap<>();
         for (int i = 0; i < columnsToUpdate.size(); i += 2) {
             updatedData.put(columnsToUpdate.get(i), columnsToUpdate.get(i + 1));
         }
-
-        // Update the specified row
-        table.updateRow(tableName, primaryKey, updatedData);
-
+    
         return "Row with primary key " + primaryKey + " updated in " + tableName;
+
     }
 
 
     public String create(HashMap<String, Object> tokens) {
         
-        String tableName = (String) tokens.get("tableName"); 
-
         //error
         if (database.containsKey(tableName)) {
             return "ERROR: Table already exists";
@@ -140,9 +160,9 @@ public class HashMapEngine extends Engine {
         List<String> columnNames = (List<String>) tokens.get("columns");
 
         //create a new hashmap table
-        //Table newTable = new Table(columnNames);
+        Table newTable = new Table(columnNames);
 
-        database.put(tableName, new Table(columnNames));
+        database.put(tableName, newTable);
 
         return "Table " + tableName + " created successfully";
     }

@@ -6,110 +6,87 @@ import java.util.Map;
 
 public class Table {
 
-    private final Map<String, Map<String, Object[]>> tableDB;
-    //private final Map<String, Object[]> table;
-
-    private final List<String> columnOrder;
+    private HashMap<Integer, HashMap<String, Object>> table;
+    private List<String> columnOrder;
 
     public Table(List<String> columnNames) {
         this.columnOrder = columnNames;
-        this.tableDB = new HashMap<>();
+        this.table = new HashMap<>();
+        this.table.put(0, createEmptyRow());
     }
 
     public List<String> getColumnOrder() {
         return columnOrder;
     }
 
-    public Map<String, Map<String, Object[]>> getTable() {
-        return tableDB;
+    public HashMap<Integer, HashMap<String, Object>> getTable() {
+        return table;
     }
 
-    public String addRow(String tableName, String primaryKey, Object[] rowData) {
-        if (!tableDB.containsKey(tableName)) {
-            return "ERROR: Table " + tableName + " does not exist";
+    public HashMap<String, Object> getRow(int rowId) {
+        return table.get(rowId);
+    }
+
+    public void addRow(HashMap<String, Object> newRow) {
+        // if (!table.containsKey(tableName)) {
+        //     return "ERROR: Table " + tableName + " does not exist";
+        // }
+
+        int rowId = table.size();
+        table.put(rowId, newRow);
+    }
+
+    private HashMap<String, Object> createEmptyRow() {
+        HashMap<String, Object> emptyRow = new HashMap<>();
+
+        for (String columnName : columnOrder) {
+            emptyRow.put(columnName, null);
         }
+        return emptyRow;
+    }
 
-        Map<String, Object[]> table = tableDB.get(tableName);
-        if (table.containsKey(primaryKey)) {
-            return "ERROR: Row with primary key " + primaryKey + " already exists in " + tableName;
-        }
-
-        // Ensure rowData has the same length as columns, padding if necessary
-        Object[] fullRowData = new Object[columnOrder.size()];
-
-        System.arraycopy(rowData, 0, fullRowData, 0, Math.min(rowData.length, columnOrder.size()));
-
-        table.put(primaryKey, fullRowData);
+    public void deleteRow(int rowId) {
         
-        return "Row added to " + tableName + " with primary key " + primaryKey;
+        table.remove(rowId);
+
+        // return "Row with primary key " + primaryKey + " deleted from " + tableName;
     }
 
-
-    public String deleteRow(String tableName, String primaryKey) {
-        if (!tableDB.containsKey(tableName)) {
-            return "ERROR: Table " + tableName + " does not exist";
-        }
-
-        Map<String, Object[]> table = tableDB.get(tableName);
-        if (!table.containsKey(primaryKey)) {
-            return "ERROR: No row with primary key " + primaryKey + " found in " + tableName;
-        }
-
-        table.remove(primaryKey);
-
-        return "Row with primary key " + primaryKey + " deleted from " + tableName;
-    }
-
-    public String updateRow(String tableName, String primaryKey, Map<String, Object> updatedData) {
+    public void updateRow(int rowId, HashMap<String, Object> updatedValues) {
         
-        if (!tableDB.containsKey(tableName)) {
-            return "ERROR: Table " + tableName + " does not exist";
-        }
+        HashMap<String, Object> row = table.get(rowId);
 
-        Map<String, Object[]> table = tableDB.get(tableName);
-        if (!table.containsKey(primaryKey)) {
-            return "ERROR: No row with primary key " + primaryKey + " found in " + tableName;
-        }
-
-        Object[] row = table.get(primaryKey);
-        for (Map.Entry<String, Object> entry : updatedData.entrySet()) {
-            int columnIndex = columnOrder.indexOf(entry.getKey());
-            if (columnIndex >= 0) {
-                row[columnIndex] = entry.getValue();
+        if (row != null) {
+            for (Map.Entry<String, Object> entry : updatedValues.entrySet()) {
+                row.put(entry.getKey(), entry.getValue());
             }
         }
-        return "Row with primary key " + primaryKey + " updated in " + tableName;
     }
 
-    public String selectAllRows(String tableName) {
-        if (!tableDB.containsKey(tableName)) {
-            return "ERROR: Table " + tableName + " does not exist";
+    public void printTable() {
+        System.out.println("Columns: " + columnOrder);
+        for (Map.Entry<Integer, HashMap<String, Object>> rowEntry : table.entrySet()) {
+            System.out.println("Row ID " + rowEntry.getKey() + ": " + rowEntry.getValue());
         }
-
-        Map<String, Object[]> table = tableDB.get(tableName);
-        if (table.isEmpty()) {
-            return "Table " + tableName + " is empty";
-        }
-
-        StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, Object[]> entry : table.entrySet()) {
-            result.append("Key: ").append(entry.getKey())
-                  .append(", Values: ").append(formatRow(entry.getValue()))
-                  .append("\n");
-        }
-
-        return result.toString();
     }
 
-    //helper method
-    private String formatRow(Object[] row) {
-        StringBuilder rowString = new StringBuilder("[");
-        for (int i = 0; i < row.length; i++) {
-            rowString.append(columnOrder.get(i)).append(": ").append(row[i]);
-            if (i < row.length - 1) rowString.append(", ");
+    public HashMap<Integer, Object> getColumnData(String columnName) {
+        HashMap<Integer, Object> columnData = new HashMap<>();
+        for (Map.Entry<Integer, HashMap<String, Object>> rowEntry : table.entrySet()) {
+            columnData.put(rowEntry.getKey(), rowEntry.getValue().get(columnName));
         }
-        rowString.append("]");
-        return rowString.toString();
+        return columnData;
     }
+
+    // //helper method
+    // private String formatRow(Object[] row) {
+    //     StringBuilder rowString = new StringBuilder("[");
+    //     for (int i = 0; i < row.length; i++) {
+    //         rowString.append(columnOrder.get(i)).append(": ").append(row[i]);
+    //         if (i < row.length - 1) rowString.append(", ");
+    //     }
+    //     rowString.append("]");
+    //     return rowString.toString();
+    // }
 
 }
