@@ -11,7 +11,7 @@ public class Main {
      *  Main method for accessing the command line interface of the database engine.
      *  MODIFICATION OF THIS FILE IS NOT RECOMMENDED!
      */
-    static DefaultEngine dbEngine = new DefaultEngine();
+    static Engine selectedEngine = null;
     
     static HashMap<Integer, String> engines = new HashMap<>();
     
@@ -71,8 +71,6 @@ public class Main {
 
         System.out.println("XQL version 1.0");
         System.out.println("Have fun, and good luck!");
-
-        Engine selectedEngine = null;
 
         //select Engine
         intro();
@@ -135,12 +133,12 @@ public class Main {
     public static void autoEvaluate() {
 
         // Set the number of queries to execute
-        int numberOfQueries = 1000000;
+        int numberOfQueries = 100000;
 
         // Create tables
-        dbEngine.executeSQL("CREATE TABLE users (id, name, age, city)");
-        dbEngine.executeSQL("CREATE TABLE products (id, name, price, category)");
-        dbEngine.executeSQL("CREATE TABLE orders (id, user_id, product_id, quantity)");
+        selectedEngine.executeSQL("CREATE TABLE users (id, name, age, city)");
+        selectedEngine.executeSQL("CREATE TABLE products (id, name, price, category)");
+        selectedEngine.executeSQL("CREATE TABLE orders (id, user_id, product_id, quantity)");
 
         // Random data generator
         Random random = new Random();
@@ -190,7 +188,7 @@ public class Main {
             int age = 20 + (i % 41); // Ages between 20 and 60
             String city = getRandomCity(random);
             String insertCommand = String.format("INSERT INTO users VALUES (%d, '%s', %d, '%s')", i, name, age, city);
-            dbEngine.executeSQL(insertCommand);
+            selectedEngine.executeSQL(insertCommand);
         }
         System.out.println("Prepopulating products");
         // Insert initial products
@@ -199,7 +197,7 @@ public class Main {
             double price = 10 + (i % 990); // Prices between $10 and $1000
             String category = getRandomCategory(random);
             String insertCommand = String.format("INSERT INTO products VALUES (%d, '%s', %.2f, '%s')", i, productName, price, category);
-            dbEngine.executeSQL(insertCommand);
+            selectedEngine.executeSQL(insertCommand);
         }
         System.out.println("Prepopulating orders");
         // Insert initial orders
@@ -208,7 +206,7 @@ public class Main {
             int product_id = random.nextInt(9999);
             int quantity = random.nextInt(1, 100);
             String insertCommand = String.format("INSERT INTO orders VALUES (%d, %d, %d, %d)", i, user_id, product_id, quantity);
-            dbEngine.executeSQL(insertCommand);
+            selectedEngine.executeSQL(insertCommand);
         }
     }
 
@@ -222,7 +220,7 @@ public class Main {
                 int age = random.nextInt(60) + 20;
                 String city = getRandomCity(random);
                 String insertUserQuery = "INSERT INTO users VALUES (" + id + ", '" + name + "', " + age + ", '" + city + "')";
-                dbEngine.executeSQL(insertUserQuery);
+                selectedEngine.executeSQL(insertUserQuery);
                 break;
             case 1: // Insert into products table
                 int productId = random.nextInt(1000) + 10000;
@@ -230,7 +228,7 @@ public class Main {
                 double price = 50 + (random.nextDouble() * 1000);
                 String category = getRandomCategory(random);
                 String insertProductQuery = "INSERT INTO products VALUES (" + productId + ", '" + productName + "', " + price + ", '" + category + "')";
-                dbEngine.executeSQL(insertProductQuery);
+                selectedEngine.executeSQL(insertProductQuery);
                 break;
             case 2: // Insert into orders table
                 int orderId = random.nextInt(10000) + 1;
@@ -238,7 +236,7 @@ public class Main {
                 int productIdRef = random.nextInt(1000) + 1;
                 int quantity = random.nextInt(10) + 1;
                 String insertOrderQuery = "INSERT INTO orders VALUES (" + orderId + ", " + userId + ", " + productIdRef + ", " + quantity + ")";
-                dbEngine.executeSQL(insertOrderQuery);
+                selectedEngine.executeSQL(insertOrderQuery);
                 break;
         }
     }
@@ -260,7 +258,7 @@ public class Main {
             default:
                 selectQuery = "SELECT * FROM users";
         }
-        dbEngine.executeSQL(selectQuery);
+        selectedEngine.executeSQL(selectQuery);
     }
 
     // Helper method to update random data in the tables
@@ -271,19 +269,19 @@ public class Main {
                 int id = random.nextInt(10000) + 1;
                 int newAge = random.nextInt(60) + 20;
                 String updateUserQuery = "UPDATE users SET age = " + newAge + " WHERE id = " + id;
-                dbEngine.executeSQL(updateUserQuery);
+                selectedEngine.executeSQL(updateUserQuery);
                 break;
             case 1: // Update products table
                 int productId = random.nextInt(1000) + 1;
                 double newPrice = 50 + (random.nextDouble() * 1000);
                 String updateProductQuery = "UPDATE products SET price = " + newPrice + " WHERE id = " + productId;
-                dbEngine.executeSQL(updateProductQuery);
+                selectedEngine.executeSQL(updateProductQuery);
                 break;
             case 2: // Update orders table
                 int orderId = random.nextInt(10000) + 1;
                 int newQuantity = random.nextInt(10) + 1;
                 String updateOrderQuery = "UPDATE orders SET quantity = " + newQuantity + " WHERE id = " + orderId;
-                dbEngine.executeSQL(updateOrderQuery);
+                selectedEngine.executeSQL(updateOrderQuery);
                 break;
         }
     }
@@ -295,17 +293,17 @@ public class Main {
             case 0: // Delete from users table
                 int userId = random.nextInt(10000) + 1;
                 String deleteUserQuery = "DELETE FROM users WHERE id = " + userId;
-                dbEngine.executeSQL(deleteUserQuery);
+                selectedEngine.executeSQL(deleteUserQuery);
                 break;
             case 1: // Delete from products table
                 int productId = random.nextInt(1000) + 1;
                 String deleteProductQuery = "DELETE FROM products WHERE id = " + productId;
-                dbEngine.executeSQL(deleteProductQuery);
+                selectedEngine.executeSQL(deleteProductQuery);
                 break;
             case 2: // Delete from orders table
                 int orderId = random.nextInt(10000) + 1;
                 String deleteOrderQuery = "DELETE FROM orders WHERE id = " + orderId;
-                dbEngine.executeSQL(deleteOrderQuery);
+                selectedEngine.executeSQL(deleteOrderQuery);
                 break;
         }
     }
@@ -334,7 +332,7 @@ public class Main {
             default:
                 complexSelectQuery = "SELECT * FROM users";
         }
-        dbEngine.executeSQL(complexSelectQuery);
+        selectedEngine.executeSQL(complexSelectQuery);
     }
 
     // Helper method to execute a complex UPDATE query with WHERE
@@ -345,13 +343,13 @@ public class Main {
                 int newAge = random.nextInt(60) + 20;
                 String city = getRandomCity(random);
                 String updateUserQuery = "UPDATE users SET age = " + newAge + " WHERE city = '" + city + "'";
-                dbEngine.executeSQL(updateUserQuery);
+                selectedEngine.executeSQL(updateUserQuery);
                 break;
             case 1: // Complex UPDATE on products
                 double newPrice = 50 + (random.nextDouble() * 1000);
                 String category = getRandomCategory(random);
                 String updateProductQuery = "UPDATE products SET price = " + newPrice + " WHERE category = '" + category + "'";
-                dbEngine.executeSQL(updateProductQuery);
+                selectedEngine.executeSQL(updateProductQuery);
                 break;
         }
     }

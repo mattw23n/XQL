@@ -40,7 +40,7 @@ public class Table {
         Id++;
     }
 
-    public void update(String[] newValues, String[] condition, String type){
+    public String update(String[] newValues, String[][] condition, String type){
         List<Integer> affectedRows = selectCondition(condition, type);
 
         //get which columns to update
@@ -71,9 +71,11 @@ public class Table {
         }
 
         // System.out.println("conditions: " + Arrays.asList(condition) + " type: " + type + "affected Rows:" + affectedRows.size());
+
+        return "Successfully updated " + affectedRows.size() + " columns";
     }
 
-    public void delete(String[] condition, String type){
+    public String delete(String[][] condition, String type){
         List<Integer> rowsToDelete = selectCondition(condition, type);
 
         // System.out.println("rows to delete" + rowsToDelete);
@@ -89,103 +91,115 @@ public class Table {
         }
 
         // System.out.println("conditions: " + Arrays.asList(condition) + " type: " + type + "deleted Rows:" + rowsToDelete.size());
+
+        return "Successfully deleted " + rowsToDelete.size() + " rows";
         
     }
 
-    public List<Integer> selectCondition(String[] condition, String type){
+    public List<Integer> selectCondition(String[][] condition, String type){
         List<List<Object>> result = new ArrayList<>();
 
-        boolean all = true;
+
+
         for(int i = 0; i < condition.length; i++){
-            if(!condition[i].isBlank()){
-                all = false;
-            }
-        }
+            String[] currCondition = condition[i];
 
-        if(all){
-            List<Integer> IDs = new ArrayList<Integer>();
-
-            for(int i =1; i < Id; i++){
-                IDs.add(i);
+            boolean all = false;
+            for(String s : currCondition){
+                if(!s.isBlank()){
+                    all = false;
+                    break;
+                }
             }
 
-            return IDs;
+            if(all){
+                List<Object> IDs = new ArrayList<Object>();
+
+                for(int k = 1; k < Id; k++){
+                    IDs.add(k);
+                }
+
+                result.add(IDs);
+                continue;
+            }
+            
+
+
+            for(int j = 0; j < currCondition.length; j++){
+                String curr = currCondition[j];
+    
+    
+                if (curr.length() == 0) {
+                    continue;
+                }
+    
+                BTree temp = columns.get(j);
+    
+                // temp.printBTree();
+                ReversedBTree reverseTemp = temp.reverse();
+                
+                // reverseTemp.printBTree();
+    
+                List<Object> search = new ArrayList<>();
+    
+                if(curr.contains(">") || curr.contains("<")){
+    
+                    int substringLength = 1;
+                    if(curr.charAt(1) == '='){
+                        substringLength = 2;
+                    }
+    
+                    String operator = curr.substring(0, substringLength);
+    
+                    if(TableUtils.isInteger(curr.substring(substringLength))){
+                        Integer value = Integer.parseInt(curr.substring(substringLength));
+    
+                        List<Object> searchResults = reverseTemp.searchByRange(value, operator);
+    
+                        if(searchResults != null){
+                            search.addAll(reverseTemp.searchByRange(value, operator));
+                        }
+                        
+                        
+                    }else{
+                        Double value = Double.parseDouble(curr.substring(substringLength));
+    
+                        List<Object> searchResults = reverseTemp.searchByRange(value, operator);
+    
+                        if(searchResults != null){
+                            search.addAll(reverseTemp.searchByRange(value, operator));
+                        }
+                    }
+                    
+                }else{
+                    //find data type
+                    if (TableUtils.isInteger(curr)) {
+    
+                        search.addAll(reverseTemp.searchByValue(Integer.parseInt(curr)));
+                    }else if(TableUtils.isDouble(curr)){
+                        search.addAll(reverseTemp.searchByValue(Double.parseDouble(curr)));
+                    }else{
+                        search.addAll(reverseTemp.searchByValue(curr));
+    
+                        // System.out.println(reverseTemp.searchByValue(curr));
+                    }
+                    
+                }
+    
+                
+    
+                result.add(search);
+            }
+
         }
 
         
-        for(int i = 0; i < condition.length; i++){
-            String curr = condition[i];
-
-
-            if (curr.length() == 0) {
-                continue;
-            }
-
-            BTree temp = columns.get(i);
-
-            // temp.printBTree();
-            ReversedBTree reverseTemp = temp.reverse();
-            
-            // reverseTemp.printBTree();
-
-            List<Object> search = new ArrayList<>();
-
-            if(curr.contains(">") || curr.contains("<")){
-
-                int substringLength = 1;
-                if(curr.charAt(1) == '='){
-                    substringLength = 2;
-                }
-
-                String operator = curr.substring(0, substringLength);
-                if(TableUtils.isInteger(curr.substring(substringLength))){
-                    Integer value = Integer.parseInt(curr.substring(substringLength));
-
-                    List<Object> searchResults = reverseTemp.searchByRange(value, operator);
-
-                    if(searchResults != null){
-                        search.addAll(reverseTemp.searchByRange(value, operator));
-                    }
-                    
-                    
-                }else{
-                    Double value = Double.parseDouble(curr.substring(substringLength));
-
-                    List<Object> searchResults = reverseTemp.searchByRange(value, operator);
-
-                    if(searchResults != null){
-                        search.addAll(reverseTemp.searchByRange(value, operator));
-                    }
-                }
-                
-
-
-            }else{
-                //find data type
-                if (TableUtils.isInteger(curr)) {
-
-                    // System.out.println(reverseTemp.searchByValue(Integer.parseInt(curr)));
-
-                    search.addAll(reverseTemp.searchByValue(Integer.parseInt(curr)));
-                }else if(TableUtils.isDouble(curr)){
-                    search.addAll(reverseTemp.searchByValue(Double.parseDouble(curr)));
-                }else{
-                    search.addAll(reverseTemp.searchByValue(curr));
-                }
-                
-            }
-
-            
-
-            result.add(search);
-        }
-
-        // System.out.println(result);
+        // System.out.println("result" + result);
         List<Object> temp = new ArrayList<>();
 
-        if(type.equals("AND")){
+        if(type.equalsIgnoreCase("AND")){
             temp = TableUtils.findIntersection(result);
-        }else if (type.equals("OR")){
+        }else if (type.equalsIgnoreCase("OR")){
             temp = TableUtils.findUnion(result);
         }else{
             temp = result.getFirst();
@@ -196,36 +210,50 @@ public class Table {
         return IDs;
     }
 
-    public void selectConditionPrint(String[] condition, String type, String[] cols){
+    public String selectConditionPrint(String[][] condition, String type, String[] cols){
         List<Integer> IDs = selectCondition(condition, type);
 
-        System.out.println("conditions: " + Arrays.asList(condition) + " type: " + type);
-        printByID(IDs, cols);
+        // System.out.println("IDs" + IDs);
+
+        // System.out.print("conditions: ");
+        // for(String[] s : condition){
+        //     System.out.print(Arrays.asList(s));
+        // }
+        // System.out.println(" type: " + type);
+
+
+        String ret = printByID(IDs, cols);
+        return ret;
     }
 
-    public void selectAll(){
-        System.out.println("Table: " + name);
-        System.out.print("Row ID\t");
-
-        for(String s : columnHeaders){
-            System.out.print(s + "\t");
+    public String selectAll() {
+        StringBuilder output = new StringBuilder();
+    
+        // Add table name and column headers
+        output.append("Table: ").append(name).append("\n");
+        // output.append("Row ID\t");
+    
+        for (String s : columnHeaders) {
+            output.append(s).append("\t");
         }
-
-        System.out.println();
-
-        for(int i = 1; i < Id; i++){
-            System.out.print(i + "\t");
-
-            for(BTree b : columns){
-                System.out.print(b.search(i) + "\t");
+    
+        output.append("\n");
+    
+        // Iterate through rows and print data for each column
+        for (int i = 1; i < Id; i++) {
+            // output.append(i).append("\t");
+    
+            for (BTree b : columns) {
+                output.append(b.search(i)).append("\t");
             }
-
-            System.out.println();
-
-            }
-
-        System.out.println();
+    
+            output.append("\n");
+        }
+    
+        // Convert StringBuilder to String and return
+        return output.toString();
     }
+    
 
     public List<Object> getRowByID(Integer ID){
         List<Object> rowData = new ArrayList<>();
@@ -237,64 +265,61 @@ public class Table {
         return rowData;
     }
 
-    public void printByID(List<Integer> IDArray, String[] cols){
-        System.out.println("Table: " + name);
-        System.out.print("Row ID\t");
+    public String printByID(List<Integer> IDArray, String[] cols){
+        StringBuilder output = new StringBuilder();
+
+        // Add table name
+        output.append("Table: ").append(name).append("\n");
+        // output.append("Row ID\t");
 
         List<Integer> columnIDs = new ArrayList<Integer>();
 
-            if(cols[0] == "*"){
-                for(String s : columnHeaders){
-                    System.out.print(s + "\t");
-                }
-                
-
-            }else{
-                for(String s : cols){
-                    for(int i = 0; i < columnHeaders.size(); i++){
-
-                        if(columnHeaders.get(i).trim().equals(s.trim())){
-                            
-                            columnIDs.add(i);
-                        }
-                    }
-
-                    // columnIDs.add(columnHeaders.indexOf(s));
-                    
-                }
-                
-
-                for(String s : cols){
-                    System.out.print(s + "\t");
-                }
-
-                
+        if (cols[0].equals("*")) {
+            // Print all column headers if cols[0] is "*"
+            for (String s : columnHeaders) {
+                output.append(s).append("\t");
             }
-            System.out.println();
-
-
-            
-            // System.out.println(columnIDs);
-            for(Integer i : IDArray){
-                System.out.print(i + "\t");
-
-                if(cols[0] == "*"){
-                    for(BTree b : columns){
-                        System.out.print(b.search(i) + "\t");
-                    }
-                }else{
-                    for(int j = 0; j < columnIDs.size(); j++){
-                        int currID = columnIDs.get(j);
-                        
-                        System.out.print(columns.get(currID).search(i) + "\t");
+        } else {
+            // Find column IDs for specific column names
+            for (String s : cols) {
+                for (int i = 0; i < columnHeaders.size(); i++) {
+                    if (columnHeaders.get(i).trim().equals(s.trim())) {
+                        columnIDs.add(i);
                     }
                 }
-                
-
-                System.out.println();
             }
-            System.out.println();
+
+            // Append selected column headers
+            for (String s : cols) {
+                output.append(s).append("\t");
+            }
         }
+
+        output.append("\n");
+
+        // Iterate over rows (IDs)
+        for (Integer i : IDArray) {
+            // output.append(i).append("\t");
+
+            // If selecting all columns
+            if (cols[0].equals("*")) {
+                for (BTree b : columns) {
+                    output.append(b.search(i)).append("\t");
+                }
+            } else {
+                // If selecting specific columns
+                for (int j = 0; j < columnIDs.size(); j++) {
+                    int currID = columnIDs.get(j);
+                    output.append(columns.get(currID).search(i)).append("\t");
+                }
+            }
+
+            output.append("\n");
+        }
+
+        // Convert StringBuilder to String and return
+        return output.toString();
+    }
 
 
     public ArrayList<String> getColumnHeaders() {
@@ -305,4 +330,45 @@ public class Table {
         return columns;
     }
 
+    
+    public static void Test2(){
+        String[] cols = {"ID", "Name", "Age", "Job", "isSick?"};
+        String[] allCols = {"*"};
+        String[] someCols = {"Name", "Job"};
+        Table test2 = new Table("Neighbors", cols);
+
+        String[][] dummyData = {
+            {"1", "John", "17", "Chef", "False"},
+            {"2", "John", "20", "Teacher", "True"},
+            {"3", "Alice", "31", "Teacher", "False"},
+            {"4", "Alice", "23", "Chef", "True"},
+            {"5", "Carl", "15", "Student", "False"},
+        };
+
+        for(String[] s : dummyData){
+            test2.insert(s);
+        }
+
+        test2.selectAll();
+        
+        String[][] conditions = {{"", "", "", "Chef", ""}, {"", "", "", "", "False"}};
+        String type = "AND";
+
+        test2.selectConditionPrint(conditions, type, allCols);
+
+
+        test2.selectAll();
+    }
+
+    public static void main(String[] args) {
+        // Test1();
+        Test2();
+
+
+        
+    }
+
+    
+    
 }
+

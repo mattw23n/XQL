@@ -3,7 +3,6 @@ package edu.smu.smusql.BTree;
 import java.util.ArrayList;
 import java.util.List;
 
-
 class ReversedBTreeNode {
     KeyValuePair<Object, List<Object>>[] keys; // Array to store new key-value pairs (Value -> List of Keys)
     int t; // Minimum degree (defines the range for number of keys)
@@ -22,6 +21,8 @@ class ReversedBTreeNode {
 
     // Function to insert a new value as a key, and the key as a value (for multiple keys, store in a list)
     public void insertNonFull(KeyValuePair<Object, Object> KV) {
+        // System.out.println("to be inserted value" + KV.getKey());
+        // System.out.println("Key type: " + KV.getKey().getClass());
         int i = n - 1;
 
         if (leaf) {
@@ -31,9 +32,17 @@ class ReversedBTreeNode {
                 i--;
             }
 
+            
+           
+           
             // If the key (original value) already exists, append the original key to the list
-            if (i >= 0 && keys[i] != null && keys[i].getKey() == KV.getKey()) {
+            if (i >= 0 && keys[i] != null && keys[i].getKey().equals(KV.getKey()) ) {
+                
                 keys[i].getValue().add(KV.getValue()); // Add original key to the list
+
+                // System.out.println("Current key type: " + keys[i].getKey().getClass());
+                // System.out.println("curr key" + keys[i].getKey());
+                
             } else {
                 // If the key doesn't exist, create a new list and insert the key-value pair
                 List<Object> keyList = new ArrayList<>();

@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class DefaultEngine extends Engine {
     
     private static String name = "Default";
-    private static String[][] stats = {{"completes in 30 mins", "mid"}};
+    private static String[][] stats = {{"completes in 30 mins"}, {"not done"}};
 
     public DefaultEngine() {
         super(name, stats);

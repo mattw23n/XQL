@@ -444,6 +444,34 @@ public class BTree {
 
         System.out.println();
     }
+
+
+
+    public static void main(String[] args) {
+        // Create a B-tree with minimum degree 3
+        BTree bTree = new BTree(3);
+        bTree.insert(new KeyValuePair<Integer, String>(1, "test"));
+        bTree.insert(new KeyValuePair<Integer, String>(2, "test2"));
+        bTree.insert(new KeyValuePair<Integer, String>(3, "test3"));
+        bTree.insert(new KeyValuePair<Integer, String>(4, "test4"));
+        bTree.insert(new KeyValuePair<Integer, String>(5, "test5"));
+        bTree.insert(new KeyValuePair<Integer, String>(6, "test6"));
+        bTree.insert(new KeyValuePair<Integer, String>(7, "test7"));
+        bTree.insert(new KeyValuePair<Integer, String>(8, "test8"));
+
+
+        System.out.print("B-tree : ");
+        bTree.printBTree();
+
+
+        bTree.delete(6);
+        bTree.printBTree();
+
+        // if (foundNode != null)
+        //     System.out.println("Key " + searchKey + " found in the B-tree.");
+        // else
+        //     System.out.println("Key " + searchKey + " not found in the B-tree.");
+    }
 }
 
 
