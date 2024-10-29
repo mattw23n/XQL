@@ -6,6 +6,7 @@ import edu.smu.smusql.GPT.GPTEngine;
 import edu.smu.smusql.HashMap.HashMapEngine;
 import edu.smu.smusql.MapHeapMap.MapHeapMapEngine;
 import edu.smu.smusql.Treemap.TMEngine;
+import edu.smu.smusql.CircularLinkedList.CLLEngine;
 
 public class EngineFactory {
 
@@ -25,9 +26,12 @@ public class EngineFactory {
 
             case "MAPHEAPMAP":
                 return new MapHeapMapEngine();
-            
+
             case "GPT":
                 return new GPTEngine();
+
+            case "CIRCULARLINKEDLIST":
+                return new CLLEngine();
 
             case "DEFAULT":
                 return new DefaultEngine();
