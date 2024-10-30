@@ -8,8 +8,6 @@ import java.util.TreeMap;
 import edu.smu.smusql.CustomParser;
 import edu.smu.smusql.Engine;
 
-import java.util.Map;
-
 public class TMEngine extends Engine {
     private TreeMap<String, Table> database = new TreeMap<String, Table>();
     HashMap<String, Object> parsedSQL;
@@ -153,11 +151,12 @@ public class TMEngine extends Engine {
         StringBuilder result = new StringBuilder();
         result.append("Result:\n");
 
-        // Print header (column names)
-        if (!table.getTable().isEmpty()) {
-            TreeMap<String, Object> firstRow = table.getTable().firstEntry().getValue();
-            result.append(String.join("\t", firstRow.keySet())).append("\n");
+        List<String> specifiedTargets = (List<String>) parsedSQL.get("target");
+
+        for (String specifiedColumns : specifiedTargets) {
+            result.append(specifiedColumns + "\t");
         }
+        result.append("\n");
 
         // Iterate over each row
         for (int i : table.getTable().keySet()) {
@@ -287,7 +286,7 @@ public class TMEngine extends Engine {
 
         database.put(tableName, new Table(columns));
 
-        return "TM " + tableName + " created";
+        return "Table: " + tableName + " created";
     }
 
 }
