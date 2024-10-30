@@ -138,7 +138,7 @@ public class Main {
     public static void autoEvaluate() {
 
         // Set the number of queries to execute
-        int numberOfQueries = 1000000;
+        int numberOfQueries = 100000;
 
         // Create tables
         selectedEngine.executeSQL("CREATE TABLE users (id, name, age, city)");
