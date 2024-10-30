@@ -157,8 +157,6 @@ public class MinHeap<K extends Comparable<K>, V> {
                 heapifyDown(indexToRemove);  // Otherwise, heapify down
             }
         }
-
-        System.out.println("Deleted key: " + key);
     }
 
     // Display the heap

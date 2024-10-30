@@ -4,7 +4,7 @@ import edu.smu.smusql.ArrayList.ALEngine;
 import edu.smu.smusql.BTree.BTreeEngine;
 import edu.smu.smusql.GPT.GPTEngine;
 import edu.smu.smusql.HashMap.HashMapEngine;
-import edu.smu.smusql.MapHeapMap.MapHeapMapEngine;
+import edu.smu.smusql.MapHeapMap.*;
 import edu.smu.smusql.Treemap.TMEngine;
 import edu.smu.smusql.CircularLinkedList.CLLEngine;
 
@@ -25,7 +25,7 @@ public class EngineFactory {
                 return new HashMapEngine();
 
             case "MAPHEAPMAP":
-                return new MapHeapMapEngine();
+                return new HeapEngine();
 
             case "GPT":
                 return new GPTEngine();
