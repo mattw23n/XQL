@@ -182,66 +182,46 @@ public class CLLEngine extends Engine {
         String tableName = (String) parsedQuery.get("tableName");
         String conditionColumn = (String) parsedQuery.get("whereConditionColumn");
         String whereOperator = (String) parsedQuery.get("whereOperator");
-        String conditionValue = (String) parsedQuery.get("whereValue");
+        String conditionValue = String.valueOf(parsedQuery.get("whereValue")); // Convert to String
         String secondCondition = (String) parsedQuery.get("secondCondition");
         String secondConditionColumn = (String) parsedQuery.get("secondConditionColumn");
         String secondOperator = (String) parsedQuery.get("secondOperator");
-        String secondValue = (String) parsedQuery.get("secondValue");
-
-        int conditionColumnIndex = -1;
-        int secondConditionColumnIndex = -1;
-
+        String secondValue = parsedQuery.get("secondValue") != null 
+                             ? String.valueOf(parsedQuery.get("secondValue")) // Convert to String
+                             : null;
+    
         Table table = db.findTableByName(tableName);
-        if (table == null)
+        if (table == null) {
             return "Table not found";
-
+        }
+    
         CircularlyLinkedList<String[]> rows = table.getRows();
         int initialSize = rows.size();
+        int conditionColumnIndex = table.getColumnIndex(conditionColumn);
+        int secondConditionColumnIndex = secondConditionColumn != null ? table.getColumnIndex(secondConditionColumn) : -1;
+    
+        if (conditionColumnIndex == -1 || (secondConditionColumn != null && secondConditionColumnIndex == -1)) {
+            return "ERROR: Condition column not found";
+        }
+    
         for (int i = 0; i < initialSize; i++) {
             String[] row = rows.removeFirst();
-
-            // Find the index of the condition column
-            if (conditionColumnIndex == -1) {
-                for (int j = 0; j < table.getColumnSize(); j++) {
-                    String[] column = table.getColumns().get(j);
-                    if (column[0].equals(conditionColumn)) {
-                        conditionColumnIndex = j;
-                        break;
-                    }
-                }
-            }
-
-            // Find the index of the second condition column
-            if (secondConditionColumnIndex == -1 && secondConditionColumn != null) {
-                for (int j = 0; j < table.getColumnSize(); j++) {
-                    String[] column = table.getColumns().get(j);
-                    if (column[0].equals(secondConditionColumn)) {
-                        secondConditionColumnIndex = j;
-                        break;
-                    }
-                }
-            }
-
-            // Ensure indices are within bounds before accessing
-            if (conditionColumnIndex >= 0 && secondConditionColumnIndex >= 0) {
-                // Evaluate the condition
-                boolean conditionMet = evaluateCondition(row[conditionColumnIndex], whereOperator, conditionValue);
-                boolean secondConditionMet = secondCondition != null
-                        ? evaluateCondition(row[secondConditionColumnIndex], secondOperator, secondValue)
-                        : false;
-
-                // Combine conditions based on the operator
-                boolean deleteRow = (secondCondition == null || secondCondition.equalsIgnoreCase("AND"))
-                        ? conditionMet && secondConditionMet
-                        : conditionMet || secondConditionMet;
-
-                // If the row should be deleted, do not add it back to the list
-                if (!deleteRow) {
-                    rows.addLast(row); // Only add the row back if it should NOT be deleted
-                }
+            boolean conditionMet = evaluateCondition(row[conditionColumnIndex], whereOperator, conditionValue);
+            boolean secondConditionMet = secondConditionColumn != null && secondConditionColumnIndex != -1 && secondCondition != null
+                    ? evaluateCondition(row[secondConditionColumnIndex], secondOperator, secondValue)
+                    : true;
+    
+            // Combine conditions based on secondCondition AND/OR logic, if specified
+            boolean deleteRow = (secondCondition == null || secondCondition.equalsIgnoreCase("AND"))
+                    ? conditionMet && secondConditionMet
+                    : conditionMet || secondConditionMet;
+    
+            // Only add the row back if it should NOT be deleted
+            if (!deleteRow) {
+                rows.addLast(row);
             }
         }
-
+    
         return "Rows deleted from table " + tableName;
     }
 
@@ -341,7 +321,15 @@ public class CLLEngine extends Engine {
     private boolean evaluateCondition(String value, String operator, String conditionValue) {
         switch (operator) {
             case "=":
-                return value.equals(conditionValue);
+                try {
+                    // Attempt to parse both values as doubles for numeric comparison
+                    double numValue = Double.parseDouble(value);
+                    double numCondition = Double.parseDouble(conditionValue);
+                    return numValue == numCondition;
+                } catch (NumberFormatException e) {
+                    // If parsing fails, compare as strings
+                    return value.equals(conditionValue);
+                }
             case "<":
                 return Double.parseDouble(value) < Double.parseDouble(conditionValue);
             case ">":
