@@ -2,6 +2,7 @@ package edu.smu.smusql;
 
 import edu.smu.smusql.ArrayList.ALEngine;
 import edu.smu.smusql.BTree.BTreeEngine;
+import edu.smu.smusql.BTreeRows.BTreeRowEngine;
 import edu.smu.smusql.GPT.GPTEngine;
 import edu.smu.smusql.HashMap.HashMapEngine;
 import edu.smu.smusql.MapHeapMap.*;
@@ -12,8 +13,11 @@ public class EngineFactory {
 
     public static Engine getEngine(String engineType) {
         switch (engineType.toUpperCase()) {
-            case "BTREE":
+            case "BTREECOLS":
                 return new BTreeEngine();
+
+            case "BTTREEROWS":
+                return new BTreeRowEngine();
 
             case "TREEMAP":
                 return new TMEngine();

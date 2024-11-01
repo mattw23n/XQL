@@ -1,16 +1,16 @@
-package edu.smu.smusql.BTree;
-
+package edu.smu.smusql.BTreeRows;
 import java.util.*;
 
 import edu.smu.smusql.CustomParser;
 import edu.smu.smusql.Engine;
 
-public class BTreeEngine extends Engine {
-    private BTree dBTree = new BTree(3);
-    private static String name = "BTreeCols";
-    private static String[][] stats = {{"completed in 47.2 seconds"}, {"traverses columns first, then rows"}};
 
-    public BTreeEngine(){
+public class BTreeRowEngine extends Engine {
+    private BTree dBTree = new BTree(3);
+    private static String name = "BTreeRows";
+    private static String[][] stats = {{""}, {"Traverses Rows first, then columns"}};
+
+    public BTreeRowEngine(){
         super(name, stats);
     }
 
@@ -23,7 +23,6 @@ public class BTreeEngine extends Engine {
         return stats;
     }
 
-    
     public String create(HashMap<String, Object> map){
         String tableName = (String) map.get("tableName");
         List<String> colArrList = (List<String>) map.get("columns");
@@ -164,9 +163,9 @@ public class BTreeEngine extends Engine {
 
         
         if(!targetStr.equals("*") || isWhereExists){
-            returnStr =  table.selectConditionPrint(conditions, type, (targetArr == null ? selectAll : targetArr));
+            returnStr =  table.select(conditions, type, (targetArr == null ? selectAll : targetArr));
         }else{
-            returnStr = table.selectAll();
+            returnStr = table.printAll();
         }
 
         // System.out.println(returnStr);
@@ -280,7 +279,6 @@ public class BTreeEngine extends Engine {
         return returnStr;
     }
 
-
     public String delete(HashMap<String, Object> map){
         // for (String key : map.keySet()) {
         //     System.out.println("Key: " + key + ", Value: " + map.get(key));
@@ -358,7 +356,6 @@ public class BTreeEngine extends Engine {
         return returnStr;
     }
 
-
     public String executeSQL(String query) {
         HashMap<String, Object> map;
         
@@ -390,5 +387,36 @@ public class BTreeEngine extends Engine {
         }
     }
     
-}
 
+    public static void main(String[] args) {
+                
+
+        BTreeRowEngine engine = new BTreeRowEngine();
+
+        String[] customCommands = {
+                "CREATE TABLE student (id, name, age, city)",
+                "INSERT INTO student VALUES (1, John, 30, florida)",
+                "INSERT INTO student VALUES (2, Job, 20, florida)",
+                "INSERT INTO student VALUES (3, Job, 20,Houston)",
+                "INSERT INTO student VALUES (4, John, 30,Houston)",
+                "INSERT INTO student VALUES (5, James, 30,Houston)",
+                "SELECT * FROM student",
+                "SELECT * FROM student where name = John",
+                "SELECT * FROM student where age = 30",
+                "SELECT * FROM student where city = Houston",
+                "SELECT * FROM student where age > 10 or age < 30",
+        };
+
+        for(String s : customCommands){
+            engine.executeSQL(s);
+        }
+    
+
+        
+
+        
+
+
+    }
+    
+}
