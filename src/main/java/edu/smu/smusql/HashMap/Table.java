@@ -1,5 +1,6 @@
 package edu.smu.smusql.HashMap;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,16 +8,22 @@ import java.util.Map;
 public class Table {
 
     private HashMap<Integer, HashMap<String, Object>> table;
-    private List<String> columnOrder;
+    private List<String> originalColumnOrder;
 
     public Table(List<String> columnNames) {
-        this.columnOrder = columnNames;
+        this.originalColumnOrder = columnNames;
+        HashMap<String, Object> columns = new HashMap<>();
+        for (String columnName : columnNames) {
+            columns.put(columnName, null);
+        }
+
+        // Initialize the table with an empty structure
         this.table = new HashMap<>();
-        this.table.put(0, createEmptyRow());
+        this.table.put(0, columns);
     }
 
     public List<String> getColumnOrder() {
-        return columnOrder;
+        return originalColumnOrder;
     }
 
     public HashMap<Integer, HashMap<String, Object>> getTable() {
@@ -28,46 +35,41 @@ public class Table {
     }
 
     public void addRow(HashMap<String, Object> newRow) {
-        // if (!table.containsKey(tableName)) {
-        //     return "ERROR: Table " + tableName + " does not exist";
-        // }
-
-        int rowId = table.size();
-        table.put(rowId, newRow);
+        int newRowId = this.table.size()+1;
+        table.put(newRowId, newRow);
     }
 
-    private HashMap<String, Object> createEmptyRow() {
-        HashMap<String, Object> emptyRow = new HashMap<>();
+    public List<HashMap<String, Object>> selectRow(String whereConditionColumn, String whereOperator, Object whereValue, String secondCondition, String secondConditionColumn, String secondOperator, Object secondValue) {
 
-        for (String columnName : columnOrder) {
-            emptyRow.put(columnName, null);
-        }
-        return emptyRow;
-    }
-
-    public void deleteRow(int rowId) {
-        
-        table.remove(rowId);
-
-        // return "Row with primary key " + primaryKey + " deleted from " + tableName;
-    }
-
-    public void updateRow(int rowId, HashMap<String, Object> updatedValues) {
-        
-        HashMap<String, Object> row = table.get(rowId);
-
-        if (row != null) {
-            for (Map.Entry<String, Object> entry : updatedValues.entrySet()) {
-                row.put(entry.getKey(), entry.getValue());
+        List<HashMap<String, Object>> result = new ArrayList<>();
+        for (HashMap<String, Object> row : table.values()) {
+            if (matchCondition(row, whereConditionColumn, whereOperator, whereValue, secondCondition, secondConditionColumn, secondOperator, secondValue)) {
+                result.add(row);
             }
         }
+        return result;
     }
 
-    public void printTable() {
-        System.out.println("Columns: " + columnOrder);
-        for (Map.Entry<Integer, HashMap<String, Object>> rowEntry : table.entrySet()) {
-            System.out.println("Row ID " + rowEntry.getKey() + ": " + rowEntry.getValue());
+    public int updateRow(HashMap<String, Object> updates, String whereConditionColumn, String whereOperator, Object whereValue, String secondCondition, String secondConditionColumn, String secondOperator, Object secondValue) {
+        
+        int updatedCount = 0;
+        
+        for (HashMap<String, Object> row : table.values()) {
+            if (matchCondition(row, whereConditionColumn, whereOperator, whereValue, secondCondition,secondConditionColumn, secondOperator, secondValue)) {
+                row.putAll(updates);
+                updatedCount++;
+            }
         }
+        return updatedCount;
+    }
+
+    public int deleteRow(String whereConditionColumn, String whereOperator, Object whereValue, String secondCondition, String secondConditionColumn, String secondOperator, Object secondValue) {
+        
+        int initialSize = table.size();
+        
+        table.entrySet().removeIf(entry -> matchCondition(entry.getValue(), whereConditionColumn, whereOperator, whereValue, secondCondition, secondConditionColumn, secondOperator, secondValue));
+        
+        return initialSize - table.size();
     }
 
     public HashMap<Integer, Object> getColumnData(String columnName) {
@@ -78,7 +80,65 @@ public class Table {
         return columnData;
     }
 
-    // //helper method
+    //helper method
+
+    private boolean matchCondition(HashMap<String, Object> row,
+    String whereConditionColumn, String whereOperator, Object whereValue,
+    String secondCondition, String secondConditionColumn, String secondOperator, Object secondValue) {
+
+        // Evaluate the first condition
+        boolean firstCondition = evaluateCondition(row, whereConditionColumn, whereOperator, whereValue);
+
+        // If there's no second condition, return the result of the first condition
+        if (secondCondition == null || secondConditionColumn == null || secondOperator == null || secondValue == null) {
+        return firstCondition;
+        }
+
+        // Evaluate the second condition
+        boolean secondConditionResult = evaluateCondition(row, secondConditionColumn, secondOperator, secondValue);
+
+        // Apply AND/OR logic
+        if ("AND".equalsIgnoreCase(secondCondition)) {
+        return firstCondition && secondConditionResult;
+        } else if ("OR".equalsIgnoreCase(secondCondition)) {
+        return firstCondition || secondConditionResult;
+        } else {
+        throw new IllegalArgumentException("Invalid logical operator: " + secondCondition);
+        }
+        }
+
+    // Helper method to evaluate a single condition
+    private boolean evaluateCondition(HashMap<String, Object> row, String column, String operator, Object value) {
+        Object columnValue = row.get(column);
+
+        // Handle null column value cases
+        if (columnValue == null) {
+        return false;
+        }
+
+        // Check for type compatibility
+        if (columnValue instanceof Comparable && value instanceof Comparable) {
+        Comparable<Object> compColumnValue = (Comparable<Object>) columnValue;
+        Comparable<Object> compValue = (Comparable<Object>) value;
+
+        switch (operator) {
+        case "=":
+        return compColumnValue.equals(compValue);
+        case "<":
+        return compColumnValue.compareTo(compValue) < 0;
+        case ">":
+        return compColumnValue.compareTo(compValue) > 0;
+        case "<=":
+        return compColumnValue.compareTo(compValue) <= 0;
+        case ">=":
+        return compColumnValue.compareTo(compValue) >= 0;
+        default:
+        throw new IllegalArgumentException("Invalid operator: " + operator);
+        }
+        } else {
+        throw new IllegalArgumentException("Type mismatch or incompatible types for comparison.");
+        }
+        }
     // private String formatRow(Object[] row) {
     //     StringBuilder rowString = new StringBuilder("[");
     //     for (int i = 0; i < row.length; i++) {
