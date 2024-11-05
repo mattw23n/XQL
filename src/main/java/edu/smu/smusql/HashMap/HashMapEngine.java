@@ -17,7 +17,7 @@ public class HashMapEngine extends Engine {
     Table table;
 
     private static String name = "HashMap";
-    private static String[][] stats = {{"Time"}, {"Test"}};
+    private static String[][] stats = {{"Time Efficient: 1-100sec"}, {"Inefficient in ranged search"}};
     
     public HashMapEngine() {
         super(name, stats);
@@ -84,8 +84,9 @@ public class HashMapEngine extends Engine {
             i++;
         }
 
+        int newRowId = table.getNextRowKey();
         // Add the new row to the table
-        table.addRow(newRow);
+        table.addRow(newRowId, newRow);
 
         return "Row inserted into " + tableName;
     }
@@ -188,47 +189,6 @@ public class HashMapEngine extends Engine {
         return result.toString();
     }
 
-    private boolean evaluateWhereClause(Map<String, Object> row) {
-        String columnName = (String) parsedSQL.get("whereConditionColumn");
-        String operator = (String) parsedSQL.get("whereOperator");
-        Object expectedValue = parsedSQL.get("whereValue");
-
-        boolean whereResult = evaluateCondition(row, columnName, operator, expectedValue);
-
-        // Handle a second condition if it exists
-        if (parsedSQL.containsKey("secondCondition")) {
-            String secondCondition = (String) parsedSQL.get("secondCondition");
-            columnName = (String) parsedSQL.get("secondConditionColumn");
-            operator = (String) parsedSQL.get("secondOperator");
-            expectedValue = parsedSQL.get("secondValue");
-
-            boolean secondResult = evaluateCondition(row, columnName, operator, expectedValue);
-
-            if (secondCondition.equalsIgnoreCase("AND")) {
-                whereResult &= secondResult;
-            } else if (secondCondition.equalsIgnoreCase("OR")) {
-                whereResult |= secondResult;
-            }
-        }
-        return whereResult;
-    }
-
-    private boolean evaluateCondition(Map<String, Object> row, String columnName, String operator, Object expectedValue) {
-        Object columnValue = row.get(columnName);
-        if (columnValue == null) return false;
-
-        switch (operator) {
-            case "=":
-                return columnValue.equals(expectedValue);
-            case "<":
-                return Double.parseDouble(columnValue.toString()) < Double.parseDouble(expectedValue.toString());
-            case ">":
-                return Double.parseDouble(columnValue.toString()) > Double.parseDouble(expectedValue.toString());
-            default:
-                return false;
-        }
-    }
-
     // public String select(HashMap<String, Object> parsedSQL) {
 
     //     // Error if table does not exist
@@ -304,16 +264,45 @@ public class HashMapEngine extends Engine {
         return "Table " + tableName + " created successfully";
     }
 
-    private String formatSelectResult(List<HashMap<String, Object>> rows, List<String> columnOrder) {
-        StringBuilder result = new StringBuilder();
-        result.append(String.join("\t", columnOrder)).append("\n");
-        
-        for (HashMap<String, Object> row : rows) {
-            for (String column : columnOrder) {
-                result.append(row.getOrDefault(column, "NULL")).append("\t");
+    private boolean evaluateWhereClause(Map<String, Object> row) {
+        String columnName = (String) parsedSQL.get("whereConditionColumn");
+        String operator = (String) parsedSQL.get("whereOperator");
+        Object expectedValue = parsedSQL.get("whereValue");
+
+        boolean whereResult = evaluateCondition(row, columnName, operator, expectedValue);
+
+        // Handle a second condition if it exists
+        if (parsedSQL.containsKey("secondCondition")) {
+            String secondCondition = (String) parsedSQL.get("secondCondition");
+            columnName = (String) parsedSQL.get("secondConditionColumn");
+            operator = (String) parsedSQL.get("secondOperator");
+            expectedValue = parsedSQL.get("secondValue");
+
+            boolean secondResult = evaluateCondition(row, columnName, operator, expectedValue);
+
+            if (secondCondition.equalsIgnoreCase("AND")) {
+                whereResult &= secondResult;
+            } else if (secondCondition.equalsIgnoreCase("OR")) {
+                whereResult |= secondResult;
             }
-            result.append("\n");
         }
-        return result.toString();
+        return whereResult;
     }
+
+    private boolean evaluateCondition(Map<String, Object> row, String columnName, String operator, Object expectedValue) {
+        Object columnValue = row.get(columnName);
+        if (columnValue == null) return false;
+
+        switch (operator) {
+            case "=":
+                return columnValue.equals(expectedValue);
+            case "<":
+                return Double.parseDouble(columnValue.toString()) < Double.parseDouble(expectedValue.toString());
+            case ">":
+                return Double.parseDouble(columnValue.toString()) > Double.parseDouble(expectedValue.toString());
+            default:
+                return false;
+        }
+    }
+
 }

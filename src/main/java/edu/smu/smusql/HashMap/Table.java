@@ -8,6 +8,7 @@ import java.util.Map;
 public class Table {
 
     private HashMap<Integer, HashMap<String, Object>> table;
+    private int nextRowKey = 1;
     private List<String> originalColumnOrder;
 
     public Table(List<String> columnNames) {
@@ -34,8 +35,12 @@ public class Table {
         return table.get(rowId);
     }
 
-    public void addRow(HashMap<String, Object> newRow) {
-        int newRowId = this.table.size()+1;
+    public int getNextRowKey() {
+        return nextRowKey++;
+    }
+
+    public void addRow(int newRowId, HashMap<String, Object> newRow) {
+        //int newRowId = this.table.size()+1;
         table.put(newRowId, newRow);
     }
 
@@ -68,7 +73,7 @@ public class Table {
         int initialSize = table.size();
         
         table.entrySet().removeIf(entry -> matchCondition(entry.getValue(), whereConditionColumn, whereOperator, whereValue, secondCondition, secondConditionColumn, secondOperator, secondValue));
-        
+
         return initialSize - table.size();
     }
 
