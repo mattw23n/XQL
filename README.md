@@ -31,7 +31,7 @@ XQL is a unique SQL engine that allows users to execute SQL queries using variou
 ### Steps to Run
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/mattw23n/XQL.git
    cd XQL
    ```
 2. Compile the project using Maven:
