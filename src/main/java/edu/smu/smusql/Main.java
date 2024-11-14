@@ -70,7 +70,6 @@ public class Main {
         engines.put(6, "HashMap");  
         engines.put(7, "MapHeapMap");
         engines.put(8, "CircularLinkedList");
-        engines.put(9, "GPT");
 
         Scanner scanner = new Scanner(System.in);
 
