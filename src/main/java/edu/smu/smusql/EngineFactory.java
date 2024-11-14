@@ -15,7 +15,7 @@ public class EngineFactory {
             case "BTREECOLS":
                 return new BTreeEngine();
 
-            case "BTTREEROWS":
+            case "BTREEROWS":
                 return new BTreeRowEngine();
 
             case "TREEMAP":
@@ -33,8 +33,6 @@ public class EngineFactory {
             case "CIRCULARLINKEDLIST":
                 return new CLLEngine();
 
-            case "DEFAULT":
-                return new DefaultEngine();
 
             default:
                 throw new IllegalArgumentException("Unsupported database engine: " + engineType);

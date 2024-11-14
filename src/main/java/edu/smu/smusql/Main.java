@@ -62,14 +62,13 @@ public class Main {
     }
     
     public static void main(String[] args) {
-        engines.put(1, "Default");
-        engines.put(2, "BTreeRows");
-        engines.put(3, "BTreeCols");
-        engines.put(4, "Treemap");
-        engines.put(5, "ArrayList");
-        engines.put(6, "HashMap");  
-        engines.put(7, "MapHeapMap");
-        engines.put(8, "CircularLinkedList");
+        engines.put(1, "BTreeRows");
+        engines.put(2, "BTreeCols");
+        engines.put(3, "Treemap");
+        engines.put(4, "ArrayList");
+        engines.put(5, "HashMap");  
+        engines.put(6, "MapHeapMap");
+        engines.put(7, "CircularLinkedList");
 
         Scanner scanner = new Scanner(System.in);
 
