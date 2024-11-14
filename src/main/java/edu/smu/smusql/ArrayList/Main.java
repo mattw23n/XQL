@@ -1,115 +1,24 @@
-package edu.smu.smusql;
+package edu.smu.smusql.ArrayList;
 
-import java.util.HashMap;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 // @author ziyuanliu@smu.edu.sg
 
 public class Main {
-    /*55
-    5
+    /*
      *  Main method for accessing the command line interface of the database engine.
      *  MODIFICATION OF THIS FILE IS NOT RECOMMENDED!
      */
-    static Engine selectedEngine = null;
-    
-    static HashMap<Integer, String> engines = new HashMap<>();
-    
-
-    public static void intro(){
-        System.out.println("--------------------------------------");
-        System.out.println("Welcome to XQL!");
-        System.out.println("Before we begin, please select which Engine you would like to use!");
-        System.out.println("Engines available:");
-        System.out.println("ID \tEngine Name");
-        for (Integer key : engines.keySet()) {
-            System.out.println(key + "\t" + engines.get(key));
-        }
-        
-        
-        System.out.println("\nPlease enter the ID of the Engine you would like to use");
-        System.out.println("--------------------------------------"); 
-    }
-
-    public static void engineStats(Engine engine){
-        String name = engine.getName();
-        String[][] stats = engine.getStats();
-
-        System.out.println("--------------------------------------"); 
-        System.out.println("Engine Name: " + name);
-        System.out.println();
-        
-
-        String[] pros = stats[0];
-        System.out.println("Pros:");
-        
-        for(String s : pros){
-            System.out.println(s);
-        }
-
-        System.out.println(); 
-
-        String[] cons = stats[1];
-        System.out.println("Cons:");
-
-        for(String s : cons){
-            System.out.println(s);
-        }
-
-        System.out.println("--------------------------------------"); 
-
-    }
-    
+    static ALEngine dbEngine = new ALEngine();
     public static void main(String[] args) {
-        engines.put(1, "BTreeRows");
-        engines.put(2, "BTreeCols");
-        engines.put(3, "Treemap");
-        engines.put(4, "ArrayList");
-        engines.put(5, "HashMap");  
-        engines.put(6, "MapHeapMap");
-        engines.put(7, "CircularLinkedList");
 
         Scanner scanner = new Scanner(System.in);
 
-        System.out.println("XQL version 1.0");
+        System.out.println("smuSQL Starter Code version 0.5");
         System.out.println("Have fun, and good luck!");
 
-        //select Engine
-        intro();
-        while(true) {
-            System.out.print("xql>");
-            String query = scanner.nextLine();
-            String selectedEngineName;
-            Integer selectedID;
-
-            if (query.equalsIgnoreCase("exit")) {
-                break;
-            }else{
-                try {
-                    selectedID = Integer.parseInt(query.trim());
-                } catch (Exception e) {
-                    System.out.println("Invalid ID!");
-                    continue;
-                }
-            }
-
-            if(engines.get(selectedID) == null){
-                System.out.println("Invalid ID!");
-                continue;
-            }
-            //get engine
-            
-            selectedEngineName = engines.get(selectedID);
-            System.out.println("Successfully chosen engine" + selectedEngineName);
-            selectedEngine = EngineFactory.getEngine(selectedEngineName);
-
-            engineStats(selectedEngine);
-            break;
-        }
-
         while (true) {
-            System.out.print("xql> ");
+            System.out.print("smusql> ");
             String query = scanner.nextLine();
             if (query.equalsIgnoreCase("exit")) {
                 break;
@@ -123,7 +32,7 @@ public class Main {
                 break;
             }
 
-            System.out.println(selectedEngine.executeSQL(query));
+            System.out.println(dbEngine.executeSQL(query));
         }
         scanner.close();
     }
@@ -139,9 +48,9 @@ public class Main {
         int numberOfQueries = 100000;
 
         // Create tables
-        selectedEngine.executeSQL("CREATE TABLE users (id, name, age, city)");
-        selectedEngine.executeSQL("CREATE TABLE products (id, name, price, category)");
-        selectedEngine.executeSQL("CREATE TABLE orders (id, user_id, product_id, quantity)");
+        dbEngine.executeSQL("CREATE TABLE users (id, name, age, city)");
+        dbEngine.executeSQL("CREATE TABLE products (id, name, price, category)");
+        dbEngine.executeSQL("CREATE TABLE orders (id, user_id, product_id, quantity)");
 
         // Random data generator
         Random random = new Random();
@@ -191,7 +100,7 @@ public class Main {
             int age = 20 + (i % 41); // Ages between 20 and 60
             String city = getRandomCity(random);
             String insertCommand = String.format("INSERT INTO users VALUES (%d, '%s', %d, '%s')", i, name, age, city);
-            selectedEngine.executeSQL(insertCommand);
+            dbEngine.executeSQL(insertCommand);
         }
         System.out.println("Prepopulating products");
         // Insert initial products
@@ -200,7 +109,7 @@ public class Main {
             double price = 10 + (i % 990); // Prices between $10 and $1000
             String category = getRandomCategory(random);
             String insertCommand = String.format("INSERT INTO products VALUES (%d, '%s', %.2f, '%s')", i, productName, price, category);
-            selectedEngine.executeSQL(insertCommand);
+            dbEngine.executeSQL(insertCommand);
         }
         System.out.println("Prepopulating orders");
         // Insert initial orders
@@ -208,8 +117,9 @@ public class Main {
             int user_id = random.nextInt(9999);
             int product_id = random.nextInt(9999);
             int quantity = random.nextInt(1, 100);
+            String category = getRandomCategory(random);
             String insertCommand = String.format("INSERT INTO orders VALUES (%d, %d, %d, %d)", i, user_id, product_id, quantity);
-            selectedEngine.executeSQL(insertCommand);
+            dbEngine.executeSQL(insertCommand);
         }
     }
 
@@ -223,7 +133,7 @@ public class Main {
                 int age = random.nextInt(60) + 20;
                 String city = getRandomCity(random);
                 String insertUserQuery = "INSERT INTO users VALUES (" + id + ", '" + name + "', " + age + ", '" + city + "')";
-                selectedEngine.executeSQL(insertUserQuery);
+                dbEngine.executeSQL(insertUserQuery);
                 break;
             case 1: // Insert into products table
                 int productId = random.nextInt(1000) + 10000;
@@ -231,7 +141,7 @@ public class Main {
                 double price = 50 + (random.nextDouble() * 1000);
                 String category = getRandomCategory(random);
                 String insertProductQuery = "INSERT INTO products VALUES (" + productId + ", '" + productName + "', " + price + ", '" + category + "')";
-                selectedEngine.executeSQL(insertProductQuery);
+                dbEngine.executeSQL(insertProductQuery);
                 break;
             case 2: // Insert into orders table
                 int orderId = random.nextInt(10000) + 1;
@@ -239,7 +149,7 @@ public class Main {
                 int productIdRef = random.nextInt(1000) + 1;
                 int quantity = random.nextInt(10) + 1;
                 String insertOrderQuery = "INSERT INTO orders VALUES (" + orderId + ", " + userId + ", " + productIdRef + ", " + quantity + ")";
-                selectedEngine.executeSQL(insertOrderQuery);
+                dbEngine.executeSQL(insertOrderQuery);
                 break;
         }
     }
@@ -261,7 +171,7 @@ public class Main {
             default:
                 selectQuery = "SELECT * FROM users";
         }
-        selectedEngine.executeSQL(selectQuery);
+        dbEngine.executeSQL(selectQuery);
     }
 
     // Helper method to update random data in the tables
@@ -272,19 +182,19 @@ public class Main {
                 int id = random.nextInt(10000) + 1;
                 int newAge = random.nextInt(60) + 20;
                 String updateUserQuery = "UPDATE users SET age = " + newAge + " WHERE id = " + id;
-                selectedEngine.executeSQL(updateUserQuery);
+                dbEngine.executeSQL(updateUserQuery);
                 break;
             case 1: // Update products table
                 int productId = random.nextInt(1000) + 1;
                 double newPrice = 50 + (random.nextDouble() * 1000);
                 String updateProductQuery = "UPDATE products SET price = " + newPrice + " WHERE id = " + productId;
-                selectedEngine.executeSQL(updateProductQuery);
+                dbEngine.executeSQL(updateProductQuery);
                 break;
             case 2: // Update orders table
                 int orderId = random.nextInt(10000) + 1;
                 int newQuantity = random.nextInt(10) + 1;
                 String updateOrderQuery = "UPDATE orders SET quantity = " + newQuantity + " WHERE id = " + orderId;
-                selectedEngine.executeSQL(updateOrderQuery);
+                dbEngine.executeSQL(updateOrderQuery);
                 break;
         }
     }
@@ -296,17 +206,17 @@ public class Main {
             case 0: // Delete from users table
                 int userId = random.nextInt(10000) + 1;
                 String deleteUserQuery = "DELETE FROM users WHERE id = " + userId;
-                selectedEngine.executeSQL(deleteUserQuery);
+                dbEngine.executeSQL(deleteUserQuery);
                 break;
             case 1: // Delete from products table
                 int productId = random.nextInt(1000) + 1;
                 String deleteProductQuery = "DELETE FROM products WHERE id = " + productId;
-                selectedEngine.executeSQL(deleteProductQuery);
+                dbEngine.executeSQL(deleteProductQuery);
                 break;
             case 2: // Delete from orders table
                 int orderId = random.nextInt(10000) + 1;
                 String deleteOrderQuery = "DELETE FROM orders WHERE id = " + orderId;
-                selectedEngine.executeSQL(deleteOrderQuery);
+                dbEngine.executeSQL(deleteOrderQuery);
                 break;
         }
     }
@@ -335,7 +245,7 @@ public class Main {
             default:
                 complexSelectQuery = "SELECT * FROM users";
         }
-        selectedEngine.executeSQL(complexSelectQuery);
+        dbEngine.executeSQL(complexSelectQuery);
     }
 
     // Helper method to execute a complex UPDATE query with WHERE
@@ -346,13 +256,13 @@ public class Main {
                 int newAge = random.nextInt(60) + 20;
                 String city = getRandomCity(random);
                 String updateUserQuery = "UPDATE users SET age = " + newAge + " WHERE city = '" + city + "'";
-                selectedEngine.executeSQL(updateUserQuery);
+                dbEngine.executeSQL(updateUserQuery);
                 break;
             case 1: // Complex UPDATE on products
                 double newPrice = 50 + (random.nextDouble() * 1000);
                 String category = getRandomCategory(random);
                 String updateProductQuery = "UPDATE products SET price = " + newPrice + " WHERE category = '" + category + "'";
-                selectedEngine.executeSQL(updateProductQuery);
+                dbEngine.executeSQL(updateProductQuery);
                 break;
         }
     }
