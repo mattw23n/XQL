@@ -11,7 +11,7 @@ public class HeapEngine extends Engine {
     private HeapTable table;
 
     private static String name = "MinHeapSQL";
-    private static String[][] stats = { { "completed in 30 seconds" }, { "traverses rows first, then columns" } };
+    private static String[][] stats = { { "Ideal for Top-K and min/max queries", "Efficient for aggregations and priority-based queries" }, { "Poor performance for range queries", "Requires additional structures for arbitrary lookups" }, {"Without Charging: 43.468s", "With Charging: 25.950s (40.03% increase)"}, {"200 MB"} };
 
     public HeapEngine() {
         super(name, stats);

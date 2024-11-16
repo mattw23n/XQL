@@ -57,6 +57,29 @@ public class Main {
             System.out.println(s);
         }
 
+        System.out.println(); 
+
+        String[] time = stats[2];
+        System.out.println("Time Complexity:");
+
+        for(String s : time){
+            System.out.println(s);
+        }
+
+        System.out.println(); 
+
+        String[] space = stats[3];
+        System.out.println("Space Complexity:");
+
+        for(String s : space){
+            System.out.println(s);
+        }
+
+        System.out.println();
+
+        System.out.println("To go back, type 'back'\nTo exit, type 'exit' \nTo auto-evaluate, type 'evaluate'\nElse, feel free to enter your SQL query!");
+        
+
         System.out.println("--------------------------------------"); 
 
     }
@@ -75,57 +98,66 @@ public class Main {
         System.out.println("XQL version 1.0");
         System.out.println("Have fun, and good luck!");
 
-        //select Engine
-        intro();
-        while(true) {
-            System.out.print("xql>");
-            String query = scanner.nextLine();
+        while (true) {
+            // Select Engine
+            intro();
             String selectedEngineName;
             Integer selectedID;
 
-            if (query.equalsIgnoreCase("exit")) {
-                break;
-            }else{
+            while (true) {
+                System.out.print("xql> ");
+                String query = scanner.nextLine();
+
+                if (query.equalsIgnoreCase("exit")) {
+                    System.exit(0);
+                }
+
                 try {
                     selectedID = Integer.parseInt(query.trim());
+                    if (engines.get(selectedID) == null) {
+                        System.out.println("Invalid ID!");
+                        continue;
+                    }
+                    selectedEngineName = engines.get(selectedID);
+                    System.out.println("Successfully chosen " + selectedEngineName);
+                    selectedEngine = EngineFactory.getEngine(selectedEngineName);
+
+                    engineStats(selectedEngine);
+                    break;
                 } catch (Exception e) {
-                    System.out.println("Invalid ID!");
-                    continue;
+                    System.out.println("Invalid input!");
                 }
             }
 
-            if(engines.get(selectedID) == null){
-                System.out.println("Invalid ID!");
-                continue;
+            // Query loop
+            while (true) {
+                System.out.print("xql> ");
+                String query = scanner.nextLine();
+                if (query.equalsIgnoreCase("exit")) {
+                    scanner.close();
+                    System.exit(0);
+                }
+                if (query.equalsIgnoreCase("back")) {
+                    // Return to engine selection
+                    break;
+                }
+
+                if(query.equalsIgnoreCase("evaluate")){
+                    long startTime = System.nanoTime();
+                    autoEvaluate();
+                    long stopTime = System.nanoTime();
+                    long elapsedTime = stopTime - startTime;
+                    double elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
+                    System.out.println("Time elapsed: " + elapsedTimeInSecond + " seconds");
+                    scanner.close();
+                    System.exit(0);
+                }
+                // Process the query
+                System.out.println(selectedEngine.executeSQL(query));
+                
             }
-            //get engine
-            
-            selectedEngineName = engines.get(selectedID);
-            System.out.println("Successfully chosen engine" + selectedEngineName);
-            selectedEngine = EngineFactory.getEngine(selectedEngineName);
-
-            engineStats(selectedEngine);
-            break;
         }
-
-        while (true) {
-            System.out.print("xql> ");
-            String query = scanner.nextLine();
-            if (query.equalsIgnoreCase("exit")) {
-                break;
-            } else if (query.equalsIgnoreCase("evaluate")) {
-                long startTime = System.nanoTime();
-                autoEvaluate();
-                long stopTime = System.nanoTime();
-                long elapsedTime = stopTime - startTime;
-                double elapsedTimeInSecond = (double) elapsedTime / 1_000_000_000;
-                System.out.println("Time elapsed: " + elapsedTimeInSecond + " seconds");
-                break;
-            }
-
-            System.out.println(selectedEngine.executeSQL(query));
-        }
-        scanner.close();
+        
     }
 
 

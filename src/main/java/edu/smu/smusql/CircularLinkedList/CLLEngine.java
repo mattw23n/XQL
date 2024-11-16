@@ -11,7 +11,7 @@ import edu.smu.smusql.Engine;
 public class CLLEngine extends Engine {
 
     private static String name = "Circular Linked List";
-    private static String[][] stats = { { "" }, { "" } };
+    private static String[][] stats = { { "Easy to insert and handle queries without resizing", "Simple structure with head-tail connection" }, { "Inefficient due to lack of random access (O(n * m) for most operations)" }, {"Without Charging: 81.161s", "With Charging: 47.174s (41.87% increase)"}, {"250 MB"} };
 
     public CLLEngine() {
         super(name, stats);

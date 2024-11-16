@@ -17,7 +17,7 @@ public class HashMapEngine extends Engine {
     Table table;
 
     private static String name = "HashMap";
-    private static String[][] stats = {{"Time Efficient: 25sec"}, {"Inefficient in ranged search"}};
+    private static String[][] stats = {{"Extremely fast for exact key-value lookups (O(1))", "Handles collisions efficiently with linked lists and red-black trees"}, {"Performance depends on hash function quality", "Less efficient for range queries"}, {"Without Charging: 37.259s", "With Charging: 20.640s (44.6%)"}, {"250 MB"}};
     
     public HashMapEngine() {
         super(name, stats);
