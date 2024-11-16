@@ -1,9 +1,5 @@
 package edu.smu.smusql.CircularLinkedList;
 
-/*
- * A hilariously bad implementation of a database table for smuSQL.
- * author: ziyuanliu@smu.edu.sg
- */
 public class Table {
     private String tableName;
     private CircularlyLinkedList<String[]> columns = new CircularlyLinkedList<>(); // columnName and dataType

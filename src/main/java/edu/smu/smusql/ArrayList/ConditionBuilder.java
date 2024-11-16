@@ -40,29 +40,6 @@ public class ConditionBuilder {
         return value;
     }
     
-
-    // // Attempt to convert the String value to the best possible type (Integer, Double, Boolean, or String)
-    // private static Object convertToBestType(String value) {
-    //     // Check for Boolean
-    //     if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-    //         return Boolean.parseBoolean(value);
-    //     }
-    //     // Check for Integer
-    //     try {
-    //         return Integer.parseInt(value);
-    //     } catch (NumberFormatException ignored) {
-    //         // Not an Integer
-    //     }
-    //     // Check for Double
-    //     try {
-    //         return Double.parseDouble(value);
-    //     } catch (NumberFormatException ignored) {
-    //         // Not a Double
-    //     }
-    //     // Fallback to String if no other type matched
-    //     return value;
-    // }
-
     // Handle comparison for Boolean values
     private static boolean handleBooleanComparison(Boolean columnValue, String operator, Object value) {
         if (!(value instanceof Boolean)) {
@@ -101,35 +78,3 @@ public class ConditionBuilder {
         }
     }
 }
-
-// public class ConditionBuilder {
-//     // Build a dynamic condition based on the column, operator, and value
-//     public static Condition buildCondition(String columnName, String operator, Object value, Table table) {
-//         return row -> {
-//             Object columnValue = row.getColumn(table.getColumnIndex(columnName));
-//             if (columnValue instanceof Comparable) {
-//                 Comparable comparableValue = (Comparable) columnValue;
-
-//                 // Apply the operator
-//                 switch (operator) {
-//                     case ">":
-//                         return comparableValue.compareTo(value) > 0;
-//                     case "<":
-//                         return comparableValue.compareTo(value) < 0;
-//                     case ">=":
-//                         return comparableValue.compareTo(value) >= 0;
-//                     case "<=":
-//                         return comparableValue.compareTo(value) <= 0;
-//                     case "=":
-//                         return comparableValue.equals(value);
-//                     case "!=":
-//                         return !comparableValue.equals(value);
-//                     default:
-//                         throw new IllegalArgumentException("Unsupported operator: " + operator);
-//                 }
-//             } else {
-//                 throw new IllegalArgumentException("Column " + columnName + " is not comparable.");
-//             }
-//         };
-//     }
-// }

@@ -195,31 +195,4 @@ public class MinHeap<K extends Comparable<K>, V> {
         return null; // Return null if the key is not found
     }
 
-    // Test the key-value min-heap implementation
-    public static void main(String[] args) {
-        MinHeap<String, Integer> minHeap = new MinHeap<>();
-
-        // Insert elements into the heap
-        minHeap.insert("apple", 5);
-        minHeap.insert("banana", 3);
-        minHeap.insert("cherry", 8);
-        minHeap.insert("date", 7);
-        minHeap.insert("elderberry", 2);
-
-        System.out.println("Heap after insertions:");
-        minHeap.printHeap();
-
-        // Get the minimum element
-        System.out.println("Minimum element: " + minHeap.peekMin());
-
-        // Remove the minimum element
-        System.out.println("Removing minimum element: " + minHeap.removeMin());
-        System.out.println("Heap after removing min:");
-        minHeap.printHeap();
-
-        // Remove another element
-        System.out.println("Removing another minimum element: " + minHeap.removeMin());
-        System.out.println("Heap after removing another min:");
-        minHeap.printHeap();
-    }
 }

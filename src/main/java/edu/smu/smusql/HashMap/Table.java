@@ -144,14 +144,5 @@ public class Table {
         throw new IllegalArgumentException("Type mismatch or incompatible types for comparison.");
         }
         }
-    // private String formatRow(Object[] row) {
-    //     StringBuilder rowString = new StringBuilder("[");
-    //     for (int i = 0; i < row.length; i++) {
-    //         rowString.append(columnOrder.get(i)).append(": ").append(row[i]);
-    //         if (i < row.length - 1) rowString.append(", ");
-    //     }
-    //     rowString.append("]");
-    //     return rowString.toString();
-    // }
 
 }
