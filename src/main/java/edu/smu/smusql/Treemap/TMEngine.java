@@ -14,7 +14,7 @@ public class TMEngine extends Engine {
     String tableName;
     Table table;
     private static String name = "TreeMap";
-    private static String[][] stats = { { "completed in 30 seconds" }, { "traverses rows first, then columns" } };
+    private static String[][] stats = { { "Efficient and balanced performance (O(log N) for most operations)", "Handles complex queries well" }, { "Requires extra space to remember column order", "Always sorts columns, which may not match initialization order" }, {"Without Charging: 30.883s", "With Charging: 16.998s (44.5% increase)"}, {"150 MB"} };
 
     public TMEngine() {
         super(name, stats);

@@ -9,7 +9,7 @@ public class ALEngine extends Engine {
     private Schema schema = new Schema(new ArrayList<>());
 
     private static String name = "ArrayList";
-    private static String[][] stats = {{"completed in 70-ish seconds"}, {"idk anything abt arrayLists bruh"}};
+    private static String[][] stats = {{"Simple and intuitive implementation", "Fast for creating tables & inserting rows"}, {"Slow for selecting, updating, and deleting rows", "Resizing can increase complexity sporadically"}, {"Without Charging: 186.739s", "With Charging: 110.890s (40.6% increase)"},{"200MB"}};
 
     public ALEngine(){
         super(name, stats);
@@ -28,14 +28,15 @@ public class ALEngine extends Engine {
     public String executeSQL(String query) {
 
         HashMap<String, Object> parsedSQL;
-        try {
-            parsedSQL = CustomParser.parseSQL(query);
-
-        } catch (Exception e) {
-            return e.getMessage();
-        }
-
-        String command = (String) parsedSQL.get("command");
+        String command = "";
+        
+        try { 
+            parsedSQL = CustomParser.parseSQL(query); 
+            command = (String) parsedSQL.get("command");
+ 
+        } catch (Exception e) { 
+            return e.getMessage(); 
+        } 
 
         switch (command) {
             case "CREATE":

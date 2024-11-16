@@ -8,7 +8,7 @@ import edu.smu.smusql.Engine;
 public class BTreeEngine extends Engine {
     private BTree dBTree = new BTree(3);
     private static String name = "BTreeCols";
-    private static String[][] stats = {{"completed in 47.2 seconds"}, {"traverses columns first, then rows"}};
+    private static String[][] stats = {{"Excellent for range-based searches"}, {"Column-first focus is less efficient for row-based SQL operations, requiring additional traversal"}, {"Conditional operations remain constly O(N)"}, {"Without Charging: 154.410s", "With Charging: 83.648s (45.8% increase)"}, {"150 MB"}};
 
     public BTreeEngine(){
         super(name, stats);
@@ -361,15 +361,15 @@ public class BTreeEngine extends Engine {
 
     public String executeSQL(String query) {
         HashMap<String, Object> map;
+        String command = "";
         
         try { 
             map = CustomParser.parseSQL(query); 
+            command = (String) map.get("command");
  
         } catch (Exception e) { 
             return e.getMessage(); 
         } 
-
-        String command = (String) map.get("command");
 
         switch (command) {
             case "CREATE":
