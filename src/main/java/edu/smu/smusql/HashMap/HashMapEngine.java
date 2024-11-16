@@ -189,32 +189,6 @@ public class HashMapEngine extends Engine {
         return result.toString();
     }
 
-    // public String select(HashMap<String, Object> parsedSQL) {
-
-    //     // Error if table does not exist
-    //     if (!database.containsKey(tableName)) {
-    //         return "ERROR: Table " + tableName + " does not exist";
-    //     }
-    
-    //     // Retrieve the table and select all rows
-    //     Table table = database.get(tableName);
-
-    //     if (table == null) {
-    //         return "ERROR: Table is not initialized correctly.";
-    //     }
-    
-    //     List<HashMap<String, Object>> selectedRows = table.selectRow(
-    //         (String) parsedSQL.get("whereConditionColumn"),
-    //         (String) parsedSQL.get("whereOperator"),
-    //         parsedSQL.get("whereValue"),
-    //         (String) parsedSQL.get("secondCondition"),
-    //         (String) parsedSQL.get("secondConditionColumn"),
-    //         (String) parsedSQL.get("secondOperator"),
-    //         parsedSQL.get("secondValue")
-    //     );
-
-    //     return formatSelectResult(selectedRows, table.getColumnOrder());
-    // }
 
     public String update(HashMap<String, Object> parsedSQL) {
         if (!database.containsKey(tableName)) {

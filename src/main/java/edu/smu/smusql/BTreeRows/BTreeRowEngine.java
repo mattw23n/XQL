@@ -387,36 +387,4 @@ public class BTreeRowEngine extends Engine {
         }
     }
     
-
-    public static void main(String[] args) {
-                
-
-        BTreeRowEngine engine = new BTreeRowEngine();
-
-        String[] customCommands = {
-                "CREATE TABLE student (id, name, age, city)",
-                "INSERT INTO student VALUES (1, John, 30, florida)",
-                "INSERT INTO student VALUES (2, Job, 20, florida)",
-                "INSERT INTO student VALUES (3, Job, 20,Houston)",
-                "INSERT INTO student VALUES (4, John, 30,Houston)",
-                "INSERT INTO student VALUES (5, James, 30,Houston)",
-                "SELECT * FROM student",
-                "SELECT * FROM student where name = John",
-                "SELECT * FROM student where age = 30",
-                "SELECT * FROM student where city = Houston",
-                "SELECT * FROM student where age > 10 or age < 30",
-        };
-
-        for(String s : customCommands){
-            engine.executeSQL(s);
-        }
-    
-
-        
-
-        
-
-
-    }
-    
 }

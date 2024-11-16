@@ -231,54 +231,6 @@ public class Table {
         
     }
 
-
-    public static void Test2(){
-        String[] cols = {"ID", "Name", "Age", "GPA"};
-        String[] all = {"*"};
-
-        String[] row1 = {"1", "Bob", "18", "3.1"};
-        String[] row2 = {"2", "Bill", "16", "2.66"};
-        String[] row3 = {"3", "Tom", "20", "3.9"};
-        String[] row4 = {"4", "Bob", "15", "2.7"};
-
-        String[][] condition = {{"", "", "", ">2.7"}, {"", "Bob", "", ""}};
-        String[][] condition2 = {{"", "Bob", "", ""}};
-        String[] newValues = {"", "", "", "3.6"};
-
-        
-        
-        Table test = new Table("test", cols);
-
-        test.insert(row1);
-        test.insert(row2);
-        test.insert(row3);
-        test.insert(row4);
-
-
-        test.printAll();
-
-        test.select(condition, "AND", all);
-
-
-        System.out.println();
-
-        test.printAll();
-
-        test.update(newValues, condition2, "");
-        test.printAll();
-
-        test.delete(condition2, "");
-        test.printAll();
-        
-    }
-
-    public static void main(String[] args) {
-        Test2();
-
-
-        
-    }
-
     
     
 }

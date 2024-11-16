@@ -16,7 +16,7 @@ import java.util.HashMap;
  * "whereOperator": operator of the where condition. Either = or < or >
  * "whereValue": value the where operator should check with
  * 
- * "seccondCondition": the AND / OR statement.
+ * "secondCondition": the AND / OR statement.
  * "secondConditionColumn": Column name of AND / OR condition
  * "secondOperator": operator of the 2nd condition. Either = or < or >
  * "secondValue": value the 2nd condition operator should check with
@@ -203,38 +203,4 @@ public class CustomParser {
         }
         return result.toString().trim().replaceAll("\\(", "").replaceAll("\\)", "");
     }
-
-    // public static void main(String[] args) {
-    // // parseSQL("CREATE TABLE student (id, name, age, gpa, deans_list)");
-    // String[] customCommands = {
-    // "CREATE TABLE student (id, name, age, gpa, deans_list)",
-    // "INSERT INTO student VALUES (1, John, 30, 2.4, False)",
-    // "SELECT * FROM student",
-    // "SELECT name, age FROM student",
-    // "SELECT * FROM student WHERE gpa > 3.8",
-    // "SELECT * FROM student WHERE gpa > 3.8 AND age < 20",
-    // "SELECT * FROM student WHERE gpa > 3.8 OR age < 20",
-    // "UPDATE student SET age = 25 WHERE id = 1",
-    // "UPDATE student SET deans_list = True WHERE gpa > 3.8 OR age = 201",
-    // "UPDATE student SET deans_list = True, age = 25 WHERE gpa > 3.8 OR age =
-    // 201",
-    // "DELETE FROM student WHERE gpa < 2.0",
-    // "DELETE FROM student WHERE gpa < 2.0 OR name = little_bobby_tables"
-    // };
-
-    // for (String s : customCommands) {
-    // System.out.println("original SQL: " + s);
-
-    // System.out.println("Parsed HQL into Hash SQL: ");
-
-    // HashMap<String, Object> parsed = parseSQL(s);
-
-    // for (String key : parsed.keySet()) {
-    // System.out.println("Key: " + key + ", Value: " + parsed.get(key));
-    // }
-
-    // System.out.println("\n\n");
-    // }
-
-    // }
 }

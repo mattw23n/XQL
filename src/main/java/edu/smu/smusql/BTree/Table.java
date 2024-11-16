@@ -331,44 +331,6 @@ public class Table {
     }
 
     
-    public static void Test2(){
-        String[] cols = {"ID", "Name", "Age", "Job", "isSick?"};
-        String[] allCols = {"*"};
-        String[] someCols = {"Name", "Job"};
-        Table test2 = new Table("Neighbors", cols);
-
-        String[][] dummyData = {
-            {"1", "John", "17", "Chef", "False"},
-            {"2", "John", "20", "Teacher", "True"},
-            {"3", "Alice", "31", "Teacher", "False"},
-            {"4", "Alice", "23", "Chef", "True"},
-            {"5", "Carl", "15", "Student", "False"},
-        };
-
-        for(String[] s : dummyData){
-            test2.insert(s);
-        }
-
-        test2.selectAll();
-        
-        String[][] conditions = {{"", "", "", "Chef", ""}, {"", "", "", "", "False"}};
-        String type = "AND";
-
-        test2.selectConditionPrint(conditions, type, allCols);
-
-
-        test2.selectAll();
-    }
-
-    public static void main(String[] args) {
-        // Test1();
-        Test2();
-
-
-        
-    }
-
-    
     
 }
 
